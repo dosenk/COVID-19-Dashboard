@@ -2,17 +2,21 @@ import './styles/index.scss';
 import Fetcher from './Fetcher/index.[fetcher]';
 
 document.body.onload = async () => {
-  const covidApiPath = 'https://api.covid19api.com/summary';
-  const countryInfoApiPath = 'https://restcountries.eu/rest/v2/all?fields=name;population';
+  const covidApiPath = 'https://api.covid19api.com';
+  const countryInfoApiPath = 'https://restcountries.eu/rest/v2';
   const fetcher = new Fetcher(covidApiPath, countryInfoApiPath);
-  const allCovidInfo = await fetcher.getAllCovidInfo();
-  //  'NewDeaths', 'NewConfirmed', 'NewRecovered', 'TotalDeaths', 'TotalConfirmed', 'TotalRecovered'
-  // New - last day, Total - all time, 'ALL' - all world, 'afghanistan'(slug) - country
+  const allCovidInfo = await fetcher.getCovidInfoAll();
 
+  // можно указывать без периода - тогда выдаст данные за весь период
+  // const allCovidInfoByPeriod = await fetcher.getCovidInfoByCountryPeriod('Belarus', '2020-12-02');
+  // console.log(allCovidInfoByPeriod);
+
+  //  'NewDeaths', 'NewConfirmed', 'NewRecovered', 'TotalDeaths', 'TotalConfirmed', 'TotalRecovered'
+  // New - last day, Total - all time, 'ALL' - all world, 'Afghanistan' - country
   // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'NewConfirmed'));
-  // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'NewRecovered', 'russia'));
+  // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'NewRecovered', 'Russian Federation'));
   // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'NewDeaths', 'ALL'));
-  // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'TotalConfirmed', 'belarus'));
-  // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'TotalRecovered', 'afghanistan'));
-  // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'TotalDeaths', 'afghanistan'));
+  // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'TotalConfirmed', 'Belarus'));
+  // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'TotalRecovered', 'Afghanistan'));
+  // console.log(await fetcher.getOptionsCovidInfo(allCovidInfo, 'TotalDeaths', 'Afghanistan'));
 };
