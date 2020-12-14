@@ -1,5 +1,5 @@
 import Table from '../Table/index.Table';
-import Observer from '../Observer/index.Observer';
+import Observer from '../../Observer/index.Observer';
 
 export default class App {
   constructor() {
