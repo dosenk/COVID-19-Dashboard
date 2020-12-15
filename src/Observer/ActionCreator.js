@@ -1,59 +1,66 @@
-import { LOADING, DATA_FETCHED } from './actionTypes';
-import Fetcher from '../Fetcher/index.Fetcher';
 import {
-  COVID_API,
-  COUNTRY_INFO_API,
-  CORS_ANYWHERE,
-} from '../Constants/index.Constants';
+  LOADING,
+  ALL_COVID_DATA,
+  DISPLAYING_DATA,
+  COUNTRY,
+} from './actionTypes';
+import Fetcher from '../Fetcher/index.Fetcher';
+import { COVID_API, COUNTRY_INFO_API } from '../Constants/index.Constants';
 
 export default class ActionCreator {
   constructor(observer) {
     this.observer = observer;
-    this.fetcher = new Fetcher(
-      `${CORS_ANYWHERE}${COVID_API}`,
-      COUNTRY_INFO_API
-    );
+    this.fetcher = new Fetcher(`${COVID_API}`, COUNTRY_INFO_API);
   }
 
   setLoading(isLoading = true) {
+    if (this.observer.getState().loading === isLoading) return;
+
     this.observer.dispatch({
       type: LOADING,
       payload: isLoading,
     });
   }
 
-  setFetchedData(data) {
-    this.observer.dispatch({
-      type: DATA_FETCHED,
-      payload: data,
-    });
-  }
-
-  fetchCountryData(country = 'all') {
+  fetchAllCovidInfo() {
     this.setLoading(true);
 
-    const promise = new Promise(async (resolve, reject) => {
-      try {
-        const allCovidInfo = await this.fetcher.getCovidInfoAll();
-        const data = await this.fetcher.getOptionsCovidInfo(
-          allCovidInfo,
-          this.observer.state.dataType,
-          country
-        );
-
-        resolve(data);
-      } catch (e) {
-        reject(e);
-      }
-    });
-
-    promise
-      .then(data => {
-        this.setFetchedData(data);
+    this.fetcher
+      .getCovidInfoAll()
+      .then((allCovidInfo) => {
+        this.observer.dispatch({
+          type: ALL_COVID_DATA,
+          payload: allCovidInfo,
+        });
       })
-      .catch(error => {
+      .catch((error) => {
+        // eslint-disable-next-line no-console
         console.error(error);
         this.setLoading(false);
       });
+  }
+
+  fetchOptionalInfo(country, dataType) {
+    this.fetcher
+      .getOptionsCovidInfo(this.observer.state.allCovid, dataType, country)
+      .then((data) => {
+        this.observer.dispatch({
+          type: DISPLAYING_DATA,
+          payload: { country, dataType, data },
+        });
+      });
+  }
+
+  setCountry(country) {
+    this.observer.dispatch({
+      type: COUNTRY,
+      payload: country,
+    });
+  }
+
+  setDataType(dataType) {
+    const { country } = this.observer.state;
+
+    this.fetchOptionalInfo(country, dataType);
   }
 }

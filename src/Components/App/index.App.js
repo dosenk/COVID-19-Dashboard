@@ -10,6 +10,8 @@ export default class App {
   }
 
   async start() {
+    queueMicrotask(() => this.observer.actions.fetchAllCovidInfo());
+
     this.table.start();
   }
 }
