@@ -1,0 +1,9 @@
+export const TOTAL_DEATHS = 'TotalDeaths';
+export const TOTAL_RECOVERED = 'TotalRecovered';
+export const TOTAL_CONFIRMED = 'TotalConfirmed';
+export const BY_100K_DEATHS = 'By100kDeaths';
+export const BY_100K_RECOVERED = 'By100kRecovered';
+export const BY_100K_CONFIRMED = 'By100kConfirmed';
+export const NEW_DEATHS = 'NewDeaths';
+export const NEW_RECOVERED = 'NewRecovered';
+export const NEW_CONFIRMED = 'NewConfirmed';
