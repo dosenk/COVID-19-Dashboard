@@ -1,3 +1,5 @@
+import { NEW_RECOVERED } from '../../Observer/dataTypes';
+
 export default class Table {
   constructor(parentElement, observer) {
     parentElement.append('table');
@@ -7,7 +9,13 @@ export default class Table {
   }
 
   start() {
-    this.observer.actions.fetchCountryData();
+    setTimeout(() => {
+      this.observer.actions.setDataType(NEW_RECOVERED);
+    }, 2000);
+
+    setTimeout(() => {
+      this.observer.actions.setCountry('Poland');
+    }, 2100);
   }
 
   update(state) {
