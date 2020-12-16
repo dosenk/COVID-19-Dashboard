@@ -2,9 +2,7 @@ import {
   DEFAULT_COUNTRY,
   DEFAULT_DATA_TYPE,
 } from '../Constants/index.Constants';
-import {
-  LOADING, INIT, DATA_FETCHED, COUNTRY, DATA_TYPE,
-} from './actionTypes';
+import { LOADING, INIT, DATA_FETCHED, COUNTRY, DATA_TYPE } from './actionTypes';
 
 export default (state, action) => {
   switch (action.type) {
@@ -13,8 +11,7 @@ export default (state, action) => {
         loading: true,
         country: DEFAULT_COUNTRY,
         dataType: DEFAULT_DATA_TYPE,
-        covidData: {},
-        countriesData: [],
+        data: {},
         ...state,
       };
     case LOADING:
@@ -27,8 +24,7 @@ export default (state, action) => {
       return {
         ...state,
         loading: false,
-        covidData: action.payload.covidData,
-        countriesData: action.payload.countriesData,
+        data: action.payload,
       };
 
     default:

@@ -1,6 +1,4 @@
-import {
-  LOADING, DATA_FETCHED, COUNTRY, DATA_TYPE,
-} from './actionTypes';
+import { LOADING, DATA_FETCHED, COUNTRY, DATA_TYPE } from './actionTypes';
 import Fetcher from '../Fetcher/index.Fetcher';
 import {
   COVID_API,
@@ -32,10 +30,6 @@ export default class ActionCreator {
   }
 
   static addRelativeTypesData(covidData, countriesData) {
-    if (!covidData.Countries.length || !countriesData.length) {
-      throw new Error("Can't find required properties in fetched data");
-    }
-
     const addType = (covidDataObj, type, hundredK) => {
       const result = covidDataObj[type] / hundredK;
 
@@ -54,9 +48,32 @@ export default class ActionCreator {
 
       return {
         ...covidDataObj,
+        flag: countryObj.flag,
+        population: countryObj.population,
         [BY_100K_CONFIRMED]: addType(covidDataObj, TOTAL_CONFIRMED, hundredK),
         [BY_100K_DEATHS]: addType(covidDataObj, TOTAL_DEATHS, hundredK),
         [BY_100K_RECOVERED]: addType(covidDataObj, TOTAL_RECOVERED, hundredK),
+      };
+    });
+  }
+
+  static mergeData(covidData, countriesData) {
+    if (!covidData.Countries.length || !countriesData.length) {
+      throw new Error("Can't find required properties in fetched data");
+    }
+
+    return covidData.Countries.map((covidDataObj) => {
+      const country = covidDataObj.Country;
+      const countryObj = countriesData.find(
+        (countiesDataItem) => countiesDataItem.name === country,
+      );
+
+      if (!countryObj) return covidDataObj;
+
+      return {
+        ...covidDataObj,
+        flag: countryObj.flag,
+        population: countryObj.population,
       };
     });
   }
@@ -68,14 +85,11 @@ export default class ActionCreator {
       const covidData = await this.fetcher.getCovidInfoAll();
       const countriesData = await this.fetcher.getCountriesInfo();
 
-      covidData.Countries = ActionCreator.addRelativeTypesData(
-        covidData,
-        countriesData,
-      );
+      covidData.Countries = ActionCreator.mergeData(covidData, countriesData);
 
       this.observer.dispatch({
         type: DATA_FETCHED,
-        payload: { countriesData, covidData },
+        payload: covidData,
       });
     } catch (error) {
       // eslint-disable-next-line no-console
