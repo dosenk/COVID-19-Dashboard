@@ -9,9 +9,15 @@ import {
   BY_100K_CONFIRMED,
   BY_100K_DEATHS,
   BY_100K_RECOVERED,
+  NEW_DEATHS_BY_100K,
+  NEW_RECOVERED_BY_100K,
+  NEW_CONFIRMED_BY_100K,
   TOTAL_CONFIRMED,
   TOTAL_DEATHS,
   TOTAL_RECOVERED,
+  NEW_DEATHS,
+  NEW_RECOVERED,
+  NEW_CONFIRMED,
 } from '../Constants/dataTypes';
 
 export default class ActionCreator {
@@ -29,32 +35,49 @@ export default class ActionCreator {
     });
   }
 
-  static addRelativeTypesData(covidData, countriesData) {
-    const addType = (covidDataObj, type, hundredK) => {
-      const result = covidDataObj[type] / hundredK;
+  static addType(dataItem, type) {
+    const hundredK = dataItem.population / 100000;
+    const result = dataItem[type] / hundredK;
 
-      return result.toFixed(DEFAULT_PRECISION);
+    return Number(result.toFixed(DEFAULT_PRECISION));
+  }
+
+  static getRelativeDataObj(dataItem) {
+    return {
+      [BY_100K_CONFIRMED]: ActionCreator.addType(dataItem, TOTAL_CONFIRMED),
+      [BY_100K_DEATHS]: ActionCreator.addType(dataItem, TOTAL_DEATHS),
+      [BY_100K_RECOVERED]: ActionCreator.addType(dataItem, TOTAL_RECOVERED),
+      [NEW_CONFIRMED_BY_100K]: ActionCreator.addType(dataItem, NEW_CONFIRMED),
+      [NEW_DEATHS_BY_100K]: ActionCreator.addType(dataItem, NEW_DEATHS),
+      [NEW_RECOVERED_BY_100K]: ActionCreator.addType(dataItem, NEW_RECOVERED),
     };
+  }
 
-    return covidData.Countries.map((covidDataObj) => {
-      const country = covidDataObj.Country;
-      const countryObj = countriesData.find(
-        (countiesDataItem) => countiesDataItem.name === country,
-      );
+  static addRelativeTypesData(covidData) {
+    let worldPopulation = 0;
 
-      if (!countryObj) return covidDataObj;
-
-      const hundredK = countryObj.population / 100000;
+    const Countries = covidData.Countries.map((dataItem) => {
+      worldPopulation += dataItem.population;
 
       return {
-        ...covidDataObj,
-        flag: countryObj.flag,
-        population: countryObj.population,
-        [BY_100K_CONFIRMED]: addType(covidDataObj, TOTAL_CONFIRMED, hundredK),
-        [BY_100K_DEATHS]: addType(covidDataObj, TOTAL_DEATHS, hundredK),
-        [BY_100K_RECOVERED]: addType(covidDataObj, TOTAL_RECOVERED, hundredK),
+        ...dataItem,
+        ...ActionCreator.getRelativeDataObj(dataItem),
       };
     });
+
+    const globalWithPopulation = {
+      ...covidData.Global,
+      population: worldPopulation,
+    };
+    const Global = {
+      ...globalWithPopulation,
+      ...ActionCreator.getRelativeDataObj(globalWithPopulation),
+    };
+
+    return {
+      Countries,
+      Global,
+    };
   }
 
   static mergeData(covidData, countriesData) {
@@ -62,10 +85,10 @@ export default class ActionCreator {
       throw new Error("Can't find required properties in fetched data");
     }
 
-    return covidData.Countries.map((covidDataObj) => {
-      const country = covidDataObj.Country;
+    const Countries = covidData.Countries.map((covidDataObj) => {
+      const countryCode = covidDataObj.CountryCode;
       const countryObj = countriesData.find(
-        (countiesDataItem) => countiesDataItem.name === country,
+        (countiesDataItem) => countiesDataItem.alpha2Code === countryCode,
       );
 
       if (!countryObj) return covidDataObj;
@@ -76,6 +99,11 @@ export default class ActionCreator {
         population: countryObj.population,
       };
     });
+
+    return {
+      ...covidData,
+      Countries,
+    };
   }
 
   async fetchApiData() {
@@ -84,12 +112,12 @@ export default class ActionCreator {
     try {
       const covidData = await this.fetcher.getCovidInfoAll();
       const countriesData = await this.fetcher.getCountriesInfo();
-
-      covidData.Countries = ActionCreator.mergeData(covidData, countriesData);
+      const merged = ActionCreator.mergeData(covidData, countriesData);
+      const data = ActionCreator.addRelativeTypesData(merged);
 
       this.observer.dispatch({
         type: DATA_FETCHED,
-        payload: covidData,
+        payload: data,
       });
     } catch (error) {
       // eslint-disable-next-line no-console

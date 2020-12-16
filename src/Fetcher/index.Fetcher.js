@@ -34,7 +34,7 @@ export default class Fetcher {
 
   async getCountriesInfo() {
     const data = await Fetcher.getData(
-      `${this.countryInfoApiPath}/all?fields=name;population;flag`,
+      `${this.countryInfoApiPath}/all?fields=name;population;flag;alpha2Code`,
     );
 
     return JSON.parse(data);
@@ -48,11 +48,12 @@ export default class Fetcher {
 
   async getCovidInfoByCountryPeriod(country, startD = null, endD = null) {
     const startDate = startD === null ? '2019-11-17' : startD;
-    const endDate = endD === null
-      ? `${new Date().getFullYear()}-${
-        new Date().getMonth() + 1
-      }-${new Date().getDate()}`
-      : endD;
+    const endDate =
+      endD === null
+        ? `${new Date().getFullYear()}-${
+            new Date().getMonth() + 1
+          }-${new Date().getDate()}`
+        : endD;
     const url = `/country/${country}?from=${startDate}T00:00:00Z&to=${endDate}T00:00:00Z`;
     const recivedData = await Fetcher.getData(this.covidApiPath + url);
     const data = JSON.parse(recivedData);
@@ -61,19 +62,22 @@ export default class Fetcher {
 
   async getOptionsCovidInfo(data, info, country = 'ALL') {
     try {
-      const countriesInfoCovid = country !== 'ALL'
-        ? data.Countries.filter(
-          (countryObg) => countryObg.Country === country,
-        )[0]
-        : data.Global;
+      const countriesInfoCovid =
+        country !== 'ALL'
+          ? data.Countries.filter(
+              (countryObg) => countryObg.Country === country,
+            )[0]
+          : data.Global;
       const result = { country };
       if (countriesInfoCovid[info] === undefined) {
         throw new Error(`Cannot read property ${info} of undefined"`);
       }
-      result[`${info[0].toLowerCase()}${info.slice(1)}`] = countriesInfoCovid[info];
+      result[`${info[0].toLowerCase()}${info.slice(1)}`] =
+        countriesInfoCovid[info];
       if (country !== 'ALL') {
         const countryInfo = await this.getCountryInfo(country);
-        result.by100Thousand = (100000 * countriesInfoCovid[info]) / countryInfo.population;
+        result.by100Thousand =
+          (100000 * countriesInfoCovid[info]) / countryInfo.population;
       }
       return result;
     } catch (error) {
