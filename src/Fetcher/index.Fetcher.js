@@ -34,7 +34,7 @@ export default class Fetcher {
 
   async getCountriesInfo() {
     const data = await Fetcher.getData(
-      `${this.countryInfoApiPath}/all?fields=name;population;flag;alpha2Code`,
+      `${this.countryInfoApiPath}/all?fields=name;population;flag;alpha2Code;latlng`,
     );
 
     return JSON.parse(data);
