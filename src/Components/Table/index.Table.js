@@ -1,4 +1,4 @@
-import { NEW_RECOVERED } from '../../Observer/dataTypes';
+import { NEW_RECOVERED } from '../../Constants/dataTypes';
 
 export default class Table {
   constructor(parentElement, observer) {
