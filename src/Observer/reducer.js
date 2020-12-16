@@ -2,7 +2,9 @@ import {
   DEFAULT_COUNTRY_INDEX,
   DEFAULT_DATA_TYPE,
 } from '../Constants/index.Constants';
-import { LOADING, INIT, DATA_FETCHED, COUNTRY, DATA_TYPE } from './actionTypes';
+import {
+  LOADING, INIT, DATA_FETCHED, COUNTRY, DATA_TYPE,
+} from './actionTypes';
 
 export default (state, action) => {
   switch (action.type) {

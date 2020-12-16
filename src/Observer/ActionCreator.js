@@ -1,4 +1,6 @@
-import { LOADING, DATA_FETCHED, COUNTRY, DATA_TYPE } from './actionTypes';
+import {
+  LOADING, DATA_FETCHED, COUNTRY, DATA_TYPE,
+} from './actionTypes';
 import Fetcher from '../Fetcher/index.Fetcher';
 import { COVID_API, COUNTRY_INFO_API } from '../Constants/index.Constants';
 import { mergeData, addRelativeTypesData } from './utils.Observer';
