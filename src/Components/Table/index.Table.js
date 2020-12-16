@@ -18,7 +18,7 @@ export default class Table {
     }, 2100);
   }
 
-  update(state) {
-    console.log(state);
+  update(state, eventType) {
+    console.log(eventType, state);
   }
 }

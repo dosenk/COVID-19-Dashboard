@@ -12,7 +12,7 @@ export default class Observer {
   dispatch(action) {
     this.state = reducer(this.state, action);
     this.subscribers.forEach((subscriber) => {
-      subscriber.update(this.state);
+      subscriber.update(this.state, action.type);
     });
   }
 
