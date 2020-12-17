@@ -3,7 +3,11 @@ import {
 } from './actionTypes';
 import Fetcher from '../Fetcher/index.Fetcher';
 import { COVID_API, COUNTRY_INFO_API } from '../Constants/index.Constants';
-import { mergeData, addRelativeTypesData } from './utils.Observer';
+import {
+  mergeData,
+  addRelativeTypesData,
+  countriesArrayToMap,
+} from './utils.Observer';
 
 export default class ActionCreator {
   constructor(observer) {
@@ -28,6 +32,8 @@ export default class ActionCreator {
       const countriesData = await this.fetcher.getCountriesInfo();
       const merged = mergeData(covidData, countriesData);
       const data = addRelativeTypesData(merged);
+
+      data.Countries = countriesArrayToMap(data.Countries);
 
       this.observer.dispatch({
         type: DATA_FETCHED,

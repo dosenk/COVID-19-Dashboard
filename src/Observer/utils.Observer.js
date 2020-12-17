@@ -57,6 +57,16 @@ export const addRelativeTypesData = (covidData) => {
   };
 };
 
+export const countriesArrayToMap = (countriesArray) => {
+  const countriesMap = new Map();
+
+  countriesArray.forEach((item) => {
+    countriesMap.set(item.Country, item);
+  });
+
+  return countriesMap;
+};
+
 export const mergeData = (covidData, countriesData) => {
   if (!covidData.Countries.length || !countriesData.length) {
     throw new Error("Can't find required properties in fetched data");
