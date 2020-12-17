@@ -1,24 +1,42 @@
-import { NEW_RECOVERED } from '../../Constants/dataTypes';
+import * as types from '../../Constants/dataTypes';
 
 export default class Table {
   constructor(parentElement, observer) {
-    parentElement.append('table');
+    this.parent = parentElement;
 
     this.observer = observer;
     observer.subscribe(this);
   }
 
-  start() {
-    setTimeout(() => {
-      this.observer.actions.setDataType(NEW_RECOVERED);
-    }, 2000);
+  addChangeTypeBtn(type) {
+    const btn = document.createElement('button');
+    btn.textContent = type;
 
-    setTimeout(() => {
-      this.observer.actions.setCountry('Poland');
-    }, 2100);
+    btn.addEventListener('click', (event) => {
+      this.observer.actions.setDataType(event.currentTarget.textContent);
+    });
+
+    this.div.append(btn);
+  }
+
+  start() {
+    this.div = document.createElement('div');
+    const input = document.createElement('input');
+
+    input.type = 'text';
+    input.addEventListener('change', (event) => {
+      this.observer.actions.setCountry(event.currentTarget.value);
+    });
+    this.div.append(input);
+
+    Object.values(types).forEach((type) => {
+      this.addChangeTypeBtn(type);
+    });
+
+    this.parent.append(this.div);
   }
 
   update(state, eventType) {
-    console.log(eventType, state);
+    // console.log(eventType, state);
   }
 }
