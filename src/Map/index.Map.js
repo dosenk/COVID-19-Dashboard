@@ -12,6 +12,21 @@ export default class Map {
   }
 
   update(state, eventType) {
+    const targetCountry = state.data.Countries[state.country];
+    let tagetCountryLayer;
+    if (targetCountry !== undefined) {
+      const countryName = state.data.Countries[state.country].Country;
+      this.map.eachLayer((item) => {
+        if (item.feature !== undefined) {
+          if (item.feature.properties.ADMIN === countryName) {
+            tagetCountryLayer = item;
+          }
+        }
+      });
+      this.map.fitBounds(tagetCountryLayer.getBounds());
+      this.highlightFeature(null, tagetCountryLayer);
+    }
+
     if (this.layer !== undefined) this.map.removeLayer(this.layer);
     this.layer = Leaflet
       .geoJson(this.geoJsonData, {
@@ -117,19 +132,18 @@ export default class Map {
     };
   }
 
-  highlightFeature(e) {
-    this.targetLayer = e.target;
-    this.targetLayer.setStyle({
+  highlightFeature(e = null, el = null) {
+    const targetLayer = e === null ? el : e.target;
+    targetLayer.setStyle({
       weight: 5,
       color: '#666',
       dashArray: '',
       fillOpacity: 0.7,
     });
     if (!Leaflet.Browser.ie && !Leaflet.Browser.opera && !Leaflet.Browser.edge) {
-      this.targetLayer.bringToFront();
+      targetLayer.bringToFront();
     }
-
-    this.info.update(this.targetLayer.feature.properties);
+    this.info.update(targetLayer.feature.properties);
   }
 
   resetHighlight(e) {
