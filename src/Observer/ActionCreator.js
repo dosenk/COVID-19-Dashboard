@@ -47,13 +47,9 @@ export default class ActionCreator {
   }
 
   setCountry(country) {
-    const index = this.observer
-      .getState()
-      .data.Countries.findIndex((item) => item.Country === country);
-
     this.observer.dispatch({
       type: COUNTRY,
-      payload: index,
+      payload: country,
     });
   }
 

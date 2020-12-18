@@ -1,5 +1,5 @@
 import {
-  DEFAULT_COUNTRY_INDEX,
+  DEFAULT_COUNTRY,
   DEFAULT_DATA_TYPE,
 } from '../Constants/index.Constants';
 import {
@@ -11,7 +11,7 @@ export default (state, action) => {
     case INIT:
       return {
         loading: true,
-        country: DEFAULT_COUNTRY_INDEX,
+        country: DEFAULT_COUNTRY,
         dataType: DEFAULT_DATA_TYPE,
         data: {},
         ...state,
