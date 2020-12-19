@@ -12,10 +12,11 @@ export default class Map {
   }
 
   update(state, eventType) {
-    const targetCountry = state.data.Countries[state.country];
+    // console.log(state.data);
+    const targetCountry = state.data.Countries.get(state.country);
     let tagetCountryLayer;
     if (targetCountry !== undefined) {
-      const countryName = state.data.Countries[state.country].Country;
+      const countryName = targetCountry.Country;
       this.map.eachLayer((item) => {
         if (item.feature !== undefined) {
           if (item.feature.properties.ADMIN === countryName) {
@@ -23,14 +24,14 @@ export default class Map {
           }
         }
       });
-      this.map.fitBounds(tagetCountryLayer.getBounds());
+      this.zoomToFeature(null, tagetCountryLayer);
       this.highlightFeature(null, tagetCountryLayer);
     }
 
     if (this.layer !== undefined) this.map.removeLayer(this.layer);
     this.layer = Leaflet
       .geoJson(this.geoJsonData, {
-        style: this.style.bind(state),
+        style: this.setFeatureParams.bind(state),
         onEachFeature: this.onEachFeature.bind(this),
       })
       .addTo(this.map);
@@ -49,81 +50,70 @@ export default class Map {
       zoomOffset: -1,
     }).addTo(this.map);
 
-    this.info = Leaflet.control();
+    this.infoBlock = Map.createInfoBlock();
+    this.infoBlock.addTo(this.map);
+  }
 
-    this.info.onAdd = function () {
-      this.div = Leaflet.DomUtil.create('div', 'info'); // create a div with a class "info"
+  static createInfoBlock() {
+    const infoBlock = Leaflet.control();
+    infoBlock.onAdd = function onAdd() {
+      this.div = Leaflet.DomUtil.create('div', 'info');
       this.update();
       return this.div;
     };
-
-    this.info.update = function (props) {
-      // console.log(props);
-      this.div.innerHTML = `<h4>Country:</h4>${props
+    infoBlock.update = function update(props) {
+      this.div.innerHTML = (props !== undefined)
         ? `<b>${props.ADMIN}</b><br />${props.allPeople} people <br /><img src="${props.flag}"/><br />  ${props.dataType}: ${props.covidData}`
-        : 'Hover over a state'}`;
+        : '';
     };
-
-    this.info.addTo(this.map);
+    return infoBlock;
   }
 
   static getColor(info, dataType) {
-    // const maxValuesParam = {
-    //   NewConfirmed: 190000,
-    //   TotalConfirmed: 16000000,
-    //   NewDeaths: 3000,
-    //   TotalDeaths: 300000,
-    //   NewRecovered: 48000,
-    //   TotalRecovered: 900000,
-    //   NewConfirmedBy100k: 210,
-    //   By100kConfirmed: 9400,
-    //   NewDeathsBy100k: 3.7,
-    //   By100kDeaths: 160,
-    //   NewRecoveredBy100k: 230,
-    //   By100kRecovered: 8500,
-    // };
-    let q = 1;
+    let divider = 1;
     switch (dataType) {
       case 'NewConfirmedBy100k':
       case 'NewDeathsBy100k':
       case 'By100kDeaths':
       case 'NewRecoveredBy100k':
-        q = 1000;
+        divider = 1000;
         break;
       case 'By100kRecovered':
       case 'By100kConfirmed':
-        q = 10;
+        divider = 10;
         break;
       default:
-        q = 1;
+        divider = 1;
         break;
     }
-    return info > 100000 / q ? '#800026'
-      : info > 50000 / q ? '#BD0026'
-        : info > 20000 / q ? '#E31A1C'
-          : info > 10000 / q ? '#FC4E2A'
-            : info > 5000 / q ? '#FD8D3C'
-              : info > 2000 / q ? '#FEB24C'
-                : info > 1000 / q ? '#FED976'
-                  : info > 100 / q ? '#FFEDA0'
-                    : '#ffffcc';
+    let countryColor = '#ffffcc';
+    if (info > 100000 / divider) countryColor = '#800026';
+    else if (info > 50000 / divider) countryColor = '#BD0026';
+    else if (info > 20000 / divider) countryColor = '#E31A1C';
+    else if (info > 10000 / divider) countryColor = '#FC4E2A';
+    else if (info > 5000 / divider) countryColor = '#FD8D3C';
+    else if (info > 2000 / divider) countryColor = '#FEB24C';
+    else if (info > 1000 / divider) countryColor = '#FED976';
+    else if (info > 100 / divider) countryColor = '#FFEDA0';
+    return countryColor;
   }
 
-  style(feature) {
-    const country = feature.properties.ADMIN;
+  setFeatureParams(feature) {
+    const countryFeature = feature;
+    const countryName = countryFeature.properties.ADMIN;
     const { dataType } = this;
-    const countryCovidInfo = this.data.Countries.filter((item) => item.Country === country);
-    let property = 1;
-    if (countryCovidInfo.length !== 0) {
-      property = countryCovidInfo[0][dataType];
-      feature.properties.dataType = dataType;
-      feature.properties.covidData = property;
-      feature.properties.allPeople = countryCovidInfo[0].population;
-      feature.properties.flag = countryCovidInfo[0].flag;
-      feature.properties.latlng = countryCovidInfo[0].latlng;
+    const countryCovidInfo = this.data.Countries.get(countryName);
+    let covidInfoNumber = 1;
+    if (countryCovidInfo !== undefined) {
+      covidInfoNumber = countryCovidInfo[dataType];
+      countryFeature.properties.dataType = dataType;
+      countryFeature.properties.covidData = covidInfoNumber;
+      countryFeature.properties.allPeople = countryCovidInfo.population;
+      countryFeature.properties.flag = countryCovidInfo.flag;
+      countryFeature.properties.latlng = countryCovidInfo.latlng;
     }
     return {
-      fillColor: Map.getColor(property, dataType),
+      fillColor: Map.getColor(covidInfoNumber, dataType),
       weight: 2,
       opacity: 1,
       color: 'white',
@@ -143,16 +133,18 @@ export default class Map {
     if (!Leaflet.Browser.ie && !Leaflet.Browser.opera && !Leaflet.Browser.edge) {
       targetLayer.bringToFront();
     }
-    this.info.update(targetLayer.feature.properties);
+    console.log(targetLayer);
+    this.infoBlock.update(targetLayer.feature.properties);
   }
 
   resetHighlight(e) {
     this.layer.resetStyle(e.target);
-    this.info.update();
+    this.infoBlock.update();
   }
 
-  zoomToFeature(e) {
-    this.map.fitBounds(e.target.getBounds());
+  zoomToFeature(e = null, el = null) {
+    const targetLayer = e === null ? el : e.target;
+    this.map.fitBounds(targetLayer.getBounds());
   }
 
   onEachFeature(feature, layer) {
