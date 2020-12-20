@@ -1,6 +1,6 @@
 import Leaflet from 'leaflet';
-import * as CONST from '../Constants/index.Constants';
-import GEO_JSON_DATA from '../assets/data/allCountriesFeatures.json';
+import * as CONST from '../../Constants/index.Constants';
+import GEO_JSON_DATA from '../../assets/data/allCountriesFeatures.json';
 
 export default class Map {
   constructor(parentElement, observer) {
@@ -29,8 +29,7 @@ export default class Map {
     this.infoBlock.addTo(this.map);
   }
 
-  update(state, eventType) {
-    // console.log(state, eventType);
+  update(state) {
     Map.legendInfo = Map.getLegedInfo(state.dataType);
 
     if (this.layer !== undefined) this.map.removeLayer(this.layer);

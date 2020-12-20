@@ -1,6 +1,6 @@
 import Table from '../Table/index.Table';
 import Observer from '../../Observer/index.Observer';
-import Map from '../../Map/index.Map';
+import Map from '../Map/index.Map';
 
 export default class App {
   constructor() {
