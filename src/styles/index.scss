@@ -1,2 +1,3 @@
-@import '~reset-css', '~normalize.css', '~animate.css';
-@import './main.scss';
+@import "~reset-css", "~normalize.css", "~animate.css",
+  "~chart.js/dist/Chart.css";
+@import "./main.scss";
