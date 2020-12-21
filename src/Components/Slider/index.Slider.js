@@ -1,5 +1,5 @@
 import {
-  LEFT_ARROW, RIGHT_ARROW, MAIN_INFO_BLOCK, DATA_TYPES_KEYS,
+  LEFT_ARROW, RIGHT_ARROW, MAIN_INFO_BLOCK, DATA_TYPES_KEYS, DATA_TYPES_VALUES,
 } from './constants';
 import * as DATA_TYPES from '../../Constants/dataTypes';
 
@@ -22,7 +22,7 @@ export default class Slider {
   }
 
   setDataType(dataType) {
-    this.dataTypeKey = DATA_TYPES_KEYS.indexOf(dataType);
+    this.dataTypeKey = DATA_TYPES_VALUES.indexOf(dataType);
     this.mainInfoBlock.innerText = dataType;
   }
 
