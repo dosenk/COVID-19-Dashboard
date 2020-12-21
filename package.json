@@ -47,11 +47,8 @@
   "dependencies": {
     "@babel/polyfill": "^7.12.1",
     "animate.css": "^4.1.1",
-<<<<<<< HEAD
     "chart.js": "^2.9.4",
-=======
     "leaflet": "^1.7.1",
->>>>>>> 6cf5d84d4577f415d10c76f17c1c55f18d78ce68
     "normalize.css": "^8.0.1",
     "reset-css": "^5.0.1"
   },
