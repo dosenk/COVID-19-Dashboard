@@ -1,12 +1,13 @@
 import Leaflet from 'leaflet';
-import * as CONST from '../../Constants/index.Constants';
+import * as COVID_TYPES from '../../Constants/dataTypes';
+import {
+  MAPBOX_API, MAPBOX_ID, LEGEND_COLOR_DEFAULT, LEGEND_COLORS, DEFAULT_COORDINATES,
+} from './constants';
 import GEO_JSON_DATA from '../../assets/data/allCountriesFeatures.json';
 
 export default class Map {
   constructor(parentElement, observer) {
     this.parent = parentElement;
-    this.geoJsonData = GEO_JSON_DATA;
-    this.coordinates = [53.8981064, 27.5449547];
     this.observer = observer;
     observer.subscribe(this);
   }
@@ -16,10 +17,10 @@ export default class Map {
     this.div.id = 'map';
     this.parent.append(this.div);
 
-    this.map = Leaflet.map('map').setView(this.coordinates, 2);
+    this.map = Leaflet.map('map').setView(DEFAULT_COORDINATES, 2);
 
-    Leaflet.tileLayer(CONST.MAPBOX_API, {
-      id: 'mapbox/light-v9',
+    Leaflet.tileLayer(MAPBOX_API, {
+      id: MAPBOX_ID,
       tileSize: 512,
       zoomOffset: -1,
     }).addTo(this.map);
@@ -34,7 +35,7 @@ export default class Map {
 
     if (this.layer !== undefined) this.map.removeLayer(this.layer);
     this.layer = Leaflet
-      .geoJson(this.geoJsonData, {
+      .geoJson(GEO_JSON_DATA, {
         style: this.setFeatureParams.bind(state),
         onEachFeature: this.onEachFeature.bind(this),
       })
@@ -43,10 +44,11 @@ export default class Map {
     const targetCountry = state.data.Countries.get(state.country);
     if (targetCountry !== undefined) {
       let tagetCountryLayer;
-      const countryName = targetCountry.Country;
+      const countryName = targetCountry.name;
       this.map.eachLayer((item) => {
         if (item.feature !== undefined) {
-          if (item.feature.properties.ADMIN === countryName) tagetCountryLayer = item;
+          if (item.feature.properties.ADMIN === countryName
+            || item.feature.properties.ISO_A3 === countryName) tagetCountryLayer = item;
         }
       });
       this.zoomToFeature(null, tagetCountryLayer);
@@ -60,8 +62,10 @@ export default class Map {
   setFeatureParams(feature) {
     const countryFeature = feature;
     const countryName = countryFeature.properties.ADMIN;
+    const countryIsoName = countryFeature.properties.ISO_A3;
     const { dataType } = this;
-    const countryCovidInfo = this.data.Countries.get(countryName);
+    const countryCovidInfo = this.data.Countries.get(countryName)
+      || this.data.Countries.get(countryIsoName);
     let covidInfoNumber = -1;
     if (countryCovidInfo !== undefined) {
       covidInfoNumber = countryCovidInfo[dataType];
@@ -93,19 +97,32 @@ export default class Map {
     const infoBlock = Leaflet.control();
     infoBlock.onAdd = function onAdd() {
       this.div = Leaflet.DomUtil.create('div', 'info');
+      this.div.overFlag = false;
+      this.div.onmouseover = (e) => {
+        if (e.target.closest('.info')) this.div.overFlag = true;
+        this.div.onmouseout = () => {
+          this.div.overFlag = false;
+          this.update();
+        };
+      };
       this.div.classList.add('animate__animated');
       this.update();
       return this.div;
     };
     infoBlock.update = function update(props) {
       if (props !== undefined) {
-        this.div.classList.add('info-active', 'animate__fadeIn');
-        const infoCountry = props.allPeople
-          ? `<br />${props.allPeople.toLocaleString('ru')} people <br/><img src="${props.flag}"/><br/> ${props.dataType}: ${props.covidData.toLocaleString('ru')}`
-          : '<br />Sorry. No information<br/>about this country.';
-        this.div.innerHTML = `<b>${props.ADMIN}</b>${infoCountry}`;
+        setTimeout(() => {
+          this.div.classList.add('info-active', 'animate__fadeIn');
+          const infoCountry = props.allPeople
+            ? `<br />${props.allPeople.toLocaleString('ru')} people <br/><img src="${props.flag}"/><br/> ${props.dataType}: ${props.covidData.toLocaleString('ru')}`
+            : '<br />Sorry. No information<br/>about this country.';
+          this.div.innerHTML = `<b>${props.ADMIN}</b>${infoCountry}`;
+        });
       } else {
-        this.div.classList.remove('info-active', 'animate__fadeIn');
+        setTimeout(() => {
+          if (this.div.overFlag === true) return;
+          this.div.classList.remove('info-active', 'animate__fadeIn');
+        });
       }
     };
     return infoBlock;
@@ -132,26 +149,26 @@ export default class Map {
   static getLegedInfo(dataType) {
     let divider;
     switch (dataType) {
-      case 'NewDeathsBy100k':
+      case COVID_TYPES.NEW_DEATHS_BY_100K:
         divider = 100000;
         break;
-      case 'NewConfirmedBy100k':
-      case 'By100kDeaths':
-      case 'NewRecoveredBy100k':
+      case COVID_TYPES.NEW_CONFIRMED_BY_100K:
+      case COVID_TYPES.BY_100K_DEATHS:
+      case COVID_TYPES.NEW_RECOVERED_BY_100K:
         divider = 4000;
         break;
-      case 'NewDeaths':
+      case COVID_TYPES.NEW_DEATHS:
         divider = 100;
         break;
-      case 'By100kRecovered':
-      case 'By100kConfirmed':
+      case COVID_TYPES.BY_100K_RECOVERED:
+      case COVID_TYPES.BY_100K_CONFIRMED:
         divider = 50;
         break;
-      case 'NewConfirmed':
-      case 'NewRecovered':
+      case COVID_TYPES.NEW_CONFIRMED:
+      case COVID_TYPES.NEW_RECOVERED:
         divider = 10;
         break;
-      case 'TotalConfirmed':
+      case COVID_TYPES.TOTAL_CONFIRMED:
         divider = 0.1;
         break;
       default:
@@ -165,16 +182,16 @@ export default class Map {
   }
 
   static getColor(covidInfoNumber) {
-    let countryColor = '#ffffcc';
+    let countryColor = LEGEND_COLOR_DEFAULT;
     if (covidInfoNumber > 0) {
-      if (covidInfoNumber > Map.legendInfo[7]) countryColor = '#800026';
-      else if (covidInfoNumber > Map.legendInfo[6]) countryColor = '#BD0026';
-      else if (covidInfoNumber > Map.legendInfo[5]) countryColor = '#E31A1C';
-      else if (covidInfoNumber > Map.legendInfo[4]) countryColor = '#FC4E2A';
-      else if (covidInfoNumber > Map.legendInfo[3]) countryColor = '#FD8D3C';
-      else if (covidInfoNumber > Map.legendInfo[2]) countryColor = '#FEB24C';
-      else if (covidInfoNumber > Map.legendInfo[1]) countryColor = '#FED976';
-      else if (covidInfoNumber > Map.legendInfo[0]) countryColor = '#FFEDA0';
+      if (covidInfoNumber > Map.legendInfo[7]) [,,,,,,, countryColor] = LEGEND_COLORS;
+      else if (covidInfoNumber > Map.legendInfo[6]) [,,,,,, countryColor] = LEGEND_COLORS;
+      else if (covidInfoNumber > Map.legendInfo[5]) [,,,,, countryColor] = LEGEND_COLORS;
+      else if (covidInfoNumber > Map.legendInfo[4]) [,,,, countryColor] = LEGEND_COLORS;
+      else if (covidInfoNumber > Map.legendInfo[3]) [,,, countryColor] = LEGEND_COLORS;
+      else if (covidInfoNumber > Map.legendInfo[2]) [,, countryColor] = LEGEND_COLORS;
+      else if (covidInfoNumber > Map.legendInfo[1]) [, countryColor] = LEGEND_COLORS;
+      else if (covidInfoNumber > Map.legendInfo[0]) [countryColor] = LEGEND_COLORS;
       return countryColor;
     }
     return countryColor;
