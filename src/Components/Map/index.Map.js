@@ -4,6 +4,7 @@ import * as COVID_TYPES from '../../Constants/dataTypes';
 import {
   MAPBOX_API, MAPBOX_ID, LEGEND_COLOR_DEFAULT, LEGEND_COLORS, DEFAULT_COORDINATES, MAP_ID,
 } from './constants';
+import { DATA_TYPES_VALUES, DATA_TYPES_DECRYPTION } from '../../Constants/index.Constants';
 import GEO_JSON_DATA from '../../assets/data/allCountriesFeatures.json';
 
 export default class Map {
@@ -119,7 +120,7 @@ export default class Map {
         setTimeout(() => {
           this.div.classList.add('info-active', 'animate__fadeIn');
           const infoCountry = props.allPeople
-            ? `<br />${props.allPeople.toLocaleString('ru')} people <br/><img src="${props.flag}"/><br/> ${props.dataType}: ${props.covidData.toLocaleString('ru')}`
+            ? `<br />${props.allPeople.toLocaleString('ru')} people <br/><img src="${props.flag}"/><br/> ${Map.getDataTypeText(props.dataType)}: ${props.covidData.toLocaleString('ru')}`
             : '<br />Sorry. No information<br/>about this country.';
           this.div.innerHTML = `<b>${props.ADMIN}</b>${infoCountry}`;
         });
@@ -131,6 +132,11 @@ export default class Map {
       }
     };
     return infoBlock;
+  }
+
+  static getDataTypeText(dataType) {
+    const indexDataType = DATA_TYPES_VALUES.indexOf(dataType);
+    return DATA_TYPES_DECRYPTION[indexDataType];
   }
 
   createLegendBlock() {

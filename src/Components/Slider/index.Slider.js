@@ -1,7 +1,5 @@
-import {
-  LEFT_ARROW, RIGHT_ARROW, MAIN_INFO_BLOCK,
-  DATA_TYPES_VALUES, DATA_TYPES_DECRYPTION,
-} from './constants';
+import { LEFT_ARROW, RIGHT_ARROW, MAIN_INFO_BLOCK } from './constants';
+import { DATA_TYPES_VALUES, DATA_TYPES_DECRYPTION } from '../../Constants/index.Constants';
 
 export default class Slider {
   constructor(observer) {
