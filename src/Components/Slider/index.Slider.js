@@ -1,74 +1,64 @@
-import {
-  LEFT_ARROW, RIGHT_ARROW, MAIN_INFO_BLOCK, DATA_TYPES_KEYS, DATA_TYPES_VALUES,
-} from './constants';
-import * as DATA_TYPES from '../../Constants/dataTypes';
+import { LEFT_ARROW, RIGHT_ARROW, MAIN_INFO_BLOCK } from './constants';
+import { DATA_TYPES_VALUES, DATA_TYPES_DECRYPTION } from '../../Constants/index.Constants';
 
 export default class Slider {
-  constructor(parentElement, observer, cssClasses) {
-    this.parentElement = parentElement;
-    this.cssClass = cssClasses;
-    this.dataTypeKey = -1;
+  constructor(observer) {
     this.observer = observer;
     observer.subscribe(this);
-    this.container = this.createContainer(this.parentElement);
+    this.createContainer();
   }
 
   start() {
-    this.setHandlers();
+    this.container.addEventListener('click', (e) => this.clickHandler(e));
   }
 
   update(state) {
     this.setDataType(state.dataType);
   }
 
-  setDataType(dataType) {
-    this.dataTypeKey = DATA_TYPES_VALUES.indexOf(dataType);
-    this.mainInfoBlock.innerText = dataType;
-  }
-
-  createContainer(parentElem) {
-    this.container = document.createElement('div');
-    this.container.classList.add(this.cssClass);
-    this.mainInfoBlock = document.createElement('div');
-    this.mainInfoBlock.classList.add(`${this.cssClass}${MAIN_INFO_BLOCK}`, 'animate__animated');
-    const leftArrow = document.createElement('div');
-    leftArrow.classList.add(`${this.cssClass}${LEFT_ARROW}`, 'slider-btn', 'slider-left');
-    const rightArrow = document.createElement('div');
-    rightArrow.classList.add(`${this.cssClass}${RIGHT_ARROW}`, 'slider-btn', 'slider-right');
-    this.container.append(leftArrow, this.mainInfoBlock, rightArrow);
-    parentElem.append(this.container);
+  getContainer() {
     return this.container;
   }
 
-  setHandlers() {
-    this.container.addEventListener('click', (e) => this.clickHandler(e));
+  setDataType(dataType) {
+    const dataTypeIndex = DATA_TYPES_VALUES.indexOf(dataType);
+    this.infoBlock.innerText = DATA_TYPES_DECRYPTION[dataTypeIndex];
+  }
+
+  createContainer() {
+    this.container = document.createElement('div');
+    this.container.classList.add('slider');
+    this.infoBlock = document.createElement('div');
+    this.infoBlock.classList.add(`${MAIN_INFO_BLOCK}`, 'animate__animated');
+    const leftArrow = document.createElement('div');
+    leftArrow.classList.add(`${LEFT_ARROW}`, 'slider-btn', 'slider-left');
+    const rightArrow = document.createElement('div');
+    rightArrow.classList.add(`${RIGHT_ARROW}`, 'slider-btn', 'slider-right');
+    this.container.append(leftArrow, this.infoBlock, rightArrow);
   }
 
   clickHandler(e) {
     if (e.target.closest('.slider-left')) {
-      this.changeInfo(-1, 'animate__fadeOutLeftBig', 'animate__fadeInRight');
+      this.changeInfo(-1);
     }
     if (e.target.closest('.slider-right')) {
-      this.changeInfo(1, 'animate__fadeOutRightBig', 'animate__fadeInLeft');
+      this.changeInfo(1);
     }
   }
 
-  changeInfo(arrowNum, classNameRemoved, classNameAdded) {
-    this.changeDataTypeKey(arrowNum);
-    const dataType = DATA_TYPES[DATA_TYPES_KEYS[this.dataTypeKey]];
-    this.mainInfoBlock.classList.add(classNameRemoved);
-    setTimeout(() => {
-      this.mainInfoBlock.classList = 'animate__animated';
-      this.mainInfoBlock.classList.add(classNameAdded);
-      this.mainInfoBlock.innerText = dataType;
-    }, 100);
-    this.observer.actions.setDataType(dataType);
+  changeInfo(offset) {
+    const oldDataTypeIndex = DATA_TYPES_DECRYPTION.indexOf(this.infoBlock.innerText);
+    const newDataTypeIndex = Slider.changeDataTypeKey(oldDataTypeIndex + offset);
+    const newDataType = DATA_TYPES_VALUES[newDataTypeIndex];
+    const newDataTypeText = DATA_TYPES_DECRYPTION[newDataTypeIndex];
+    this.infoBlock.innerText = newDataTypeText;
+    this.observer.actions.setDataType(newDataType);
   }
 
-  changeDataTypeKey(num) {
-    const lengthTypeKeys = DATA_TYPES_KEYS.length - 1;
-    this.dataTypeKey += num;
-    if (this.dataTypeKey < 0) this.dataTypeKey = lengthTypeKeys;
-    else if (this.dataTypeKey > lengthTypeKeys) this.dataTypeKey = 0;
+  static changeDataTypeKey(num) {
+    const lengthTypeKeys = DATA_TYPES_VALUES.length - 1;
+    if (num < 0) return lengthTypeKeys;
+    if (num > lengthTypeKeys) return 0;
+    return num;
   }
 }

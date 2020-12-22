@@ -1,23 +1,27 @@
 import Leaflet from 'leaflet';
+import Slider from '../Slider/index.Slider';
 import * as COVID_TYPES from '../../Constants/dataTypes';
 import {
-  MAPBOX_API, MAPBOX_ID, LEGEND_COLOR_DEFAULT, LEGEND_COLORS, DEFAULT_COORDINATES,
+  MAPBOX_API, MAPBOX_ID, LEGEND_COLOR_DEFAULT, LEGEND_COLORS, DEFAULT_COORDINATES, MAP_ID,
 } from './constants';
+import { DATA_TYPES_VALUES, DATA_TYPES_DECRYPTION } from '../../Constants/index.Constants';
 import GEO_JSON_DATA from '../../assets/data/allCountriesFeatures.json';
 
 export default class Map {
   constructor(parentElement, observer) {
     this.parent = parentElement;
+    this.legend = this.createLegendBlock();
+    this.slider = new Slider(observer);
     this.observer = observer;
     observer.subscribe(this);
   }
 
   start() {
     this.div = document.createElement('div');
-    this.div.id = 'map';
+    this.div.id = MAP_ID;
     this.parent.append(this.div);
 
-    this.map = Leaflet.map('map').setView(DEFAULT_COORDINATES, 2);
+    this.map = Leaflet.map(MAP_ID).setView(DEFAULT_COORDINATES, 2);
 
     Leaflet.tileLayer(MAPBOX_API, {
       id: MAPBOX_ID,
@@ -28,11 +32,15 @@ export default class Map {
     if (this.infoBlock !== undefined) this.infoBlock.remove();
     this.infoBlock = Map.createInfoBlock();
     this.infoBlock.addTo(this.map);
+
+    this.legend.addTo(this.map);
+    this.legendDiv = this.legend.getContainer();
+    this.legendDiv.childNodes[0].append(this.slider.getContainer());
+    this.slider.start();
   }
 
   update(state) {
     Map.legendInfo = Map.getLegedInfo(state.dataType);
-
     if (this.layer !== undefined) this.map.removeLayer(this.layer);
     this.layer = Leaflet
       .geoJson(GEO_JSON_DATA, {
@@ -54,9 +62,7 @@ export default class Map {
       this.zoomToFeature(null, tagetCountryLayer);
       this.highlightFeature(null, tagetCountryLayer);
     }
-    if (this.legend !== undefined) this.legend.remove();
-    this.legend = Map.createLegendBlock(state.dataType);
-    this.legend.addTo(this.map);
+    Map.addLegendInfo(this.legendDiv.childNodes[1]);
   }
 
   setFeatureParams(feature) {
@@ -114,7 +120,7 @@ export default class Map {
         setTimeout(() => {
           this.div.classList.add('info-active', 'animate__fadeIn');
           const infoCountry = props.allPeople
-            ? `<br />${props.allPeople.toLocaleString('ru')} people <br/><img src="${props.flag}"/><br/> ${props.dataType}: ${props.covidData.toLocaleString('ru')}`
+            ? `<br />${props.allPeople.toLocaleString('ru')} people <br/><img src="${props.flag}"/><br/> ${Map.getDataTypeText(props.dataType)}: ${props.covidData.toLocaleString('ru')}`
             : '<br />Sorry. No information<br/>about this country.';
           this.div.innerHTML = `<b>${props.ADMIN}</b>${infoCountry}`;
         });
@@ -128,22 +134,33 @@ export default class Map {
     return infoBlock;
   }
 
-  static createLegendBlock(dataType) {
+  static getDataTypeText(dataType) {
+    const indexDataType = DATA_TYPES_VALUES.indexOf(dataType);
+    return DATA_TYPES_DECRYPTION[indexDataType];
+  }
+
+  createLegendBlock() {
     const legend = Leaflet.control({ position: 'bottomright' });
     legend.onAdd = function onAdd() {
-      const legendDiv = Leaflet.DomUtil.create('div', 'info legend animate__animated');
-      legendDiv.innerHTML = `<div class='data-type'><p>${dataType}:</p></div>`;
-      legendDiv.innerHTML += `<i style="background:${Map.getColor(-1)}"></i> 
-            &#60; ${Map.legendInfo[0].toLocaleString('ru')}<br>`;
-      for (let i = 0; i < Map.legendInfo.length; i += 1) {
-        legendDiv.innerHTML
-            += `<i style="background:${Map.getColor(Map.legendInfo[i] + 0.000001)}"></i> ${
-            Map.legendInfo[i].toLocaleString('ru')}${Map.legendInfo[i + 1] ? ` - ${Map.legendInfo[i + 1].toLocaleString('ru')}<br>` : ' +'}`;
-      }
-      legendDiv.classList.add('info-active', 'animate__fadeInRight');
+      const legendDiv = Leaflet.DomUtil.create('div', 'info legend info-active');
+      const legendSlider = Leaflet.DomUtil.create('div', 'slider');
+      const legendColors = Leaflet.DomUtil.create('div', 'info-colors');
+      legendDiv.append(legendSlider, legendColors);
       return legendDiv;
     };
+    legend.onAdd.bind(this);
     return legend;
+  }
+
+  static addLegendInfo(legendDiv) {
+    const div = legendDiv;
+    div.innerHTML = `<i style="background:${Map.getColor(-1)}"></i> 
+            &#60; ${Map.legendInfo[0].toLocaleString('ru')}<br>`;
+    for (let i = 0; i < Map.legendInfo.length; i += 1) {
+      div.innerHTML
+            += `<i style="background:${Map.getColor(Map.legendInfo[i] + 0.000001)}"></i> ${
+          Map.legendInfo[i].toLocaleString('ru')}${Map.legendInfo[i + 1] ? ` - ${Map.legendInfo[i + 1].toLocaleString('ru')}<br>` : ' +'}`;
+    }
   }
 
   static getLegedInfo(dataType) {
