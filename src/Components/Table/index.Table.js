@@ -37,6 +37,6 @@ export default class Table {
   }
 
   update(state, eventType) {
-    // console.log(eventType, state);
+    console.log(eventType, state);
   }
 }
