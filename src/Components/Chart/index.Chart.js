@@ -1,53 +1,71 @@
 import ChartJS from 'chart.js';
-import Fetcher from '../../Fetcher/index.Fetcher';
-import { COVID_API, COUNTRY_INFO_API } from '../../Constants/index.Constants';
 
 export default class Chart {
   constructor(parentElement, observer) {
     this.parentElement = parentElement;
-    this.fetcher = new Fetcher(COVID_API, COUNTRY_INFO_API);
     this.observer = observer;
     observer.subscribe(this);
-    this.createContainer();
+    this.container = Chart.createContainer();
   }
 
   start(slider) {
+    this.parentElement.append(this.container);
     this.ctx = document.getElementById('myChart').getContext('2d');
     slider.start();
   }
 
-  async update(state) {
-    const recivedState = state;
-    const dataType = recivedState.dataType.slice(5);
-    const countryCases = await this.fetcher.getCovidInfoByCountryPeriod(recivedState.country);
-    this.render(countryCases, dataType);
+  update(state) {
+    try {
+      const recivedState = state;
+      const { dataType } = recivedState;
+      const countryCases = recivedState.country === 'All'
+        ? recivedState.data.Global
+        : recivedState.data.Countries.get(recivedState.country).timeline;
+      this.render(countryCases, dataType);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log('Country not found');
+    }
   }
 
-  createContainer() {
-    this.chartContainer = document.createElement('div');
-    this.chartContainer.classList.add('chart');
+  static createContainer() {
+    const container = document.createElement('div');
+    container.classList.add('chart');
     const canvas = document.createElement('canvas');
     canvas.id = 'myChart';
     canvas.width = 600;
     canvas.height = 500;
-    this.chartContainer.append(canvas);
-    this.parentElement.append(this.chartContainer);
+    container.append(canvas);
+    return container;
   }
 
   getContainer() {
-    return this.chartContainer;
+    return this.container;
   }
 
   render(countryCases, dataType) {
-    this.chartData = countryCases.data.map((elem) => elem[dataType.toLowerCase()]);
-    this.chartDates = countryCases.data.map((elem) => new Date(elem.Date).toLocaleDateString());
+    this.chartData = countryCases
+      .map((elem) => elem[dataType])
+      .reverse();
+    this.chartDates = countryCases
+      .map((elem) => new Date(elem.date)
+        .toLocaleDateString())
+      .reverse();
+    if (this.myChart === undefined) {
+      this.addData(this.chartData, this.chartDates);
+    } else {
+      this.updateData(this.chartData, this.chartDates);
+    }
+  }
+
+  addData(chartDataX, chartDataY) {
     this.myChart = new ChartJS(this.ctx, {
       type: 'bar',
       data: {
-        labels: this.chartDates,
+        labels: chartDataY,
         datasets: [{
           label: 'cases',
-          data: this.chartData,
+          data: chartDataX,
           barPercentage: 1,
           categoryPercentage: 1,
           hoverBackgroundColor: 'rgba(255, 99, 55, 1)',
@@ -57,5 +75,11 @@ export default class Chart {
         responsive: false,
       },
     });
+  }
+
+  updateData(chartDataX, chartDataY) {
+    this.myChart.data.datasets[0].data = chartDataX;
+    this.myChart.data.labels = chartDataY;
+    this.myChart.update();
   }
 }
