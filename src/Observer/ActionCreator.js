@@ -1,4 +1,6 @@
-import { LOADING, DATA_FETCHED, COUNTRY, DATA_TYPE } from './actionTypes';
+import {
+  LOADING, DATA_FETCHED, COUNTRY, DATA_TYPE,
+} from './actionTypes';
 import {
   fetchCountriesCovid,
   fetchCountriesInfo,
