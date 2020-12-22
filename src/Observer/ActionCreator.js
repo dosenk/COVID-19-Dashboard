@@ -1,18 +1,18 @@
+import { LOADING, DATA_FETCHED, COUNTRY, DATA_TYPE } from './actionTypes';
 import {
-  LOADING, DATA_FETCHED, COUNTRY, DATA_TYPE,
-} from './actionTypes';
-import Fetcher from '../Fetcher/index.Fetcher';
-import { COVID_API, COUNTRY_INFO_API } from '../Constants/index.Constants';
+  fetchCountriesCovid,
+  fetchCountriesInfo,
+  fetchGlobalCovid,
+} from '../Fetcher/index.Fetcher';
 import {
-  mergeData,
-  addRelativeTypesData,
   countriesArrayToMap,
+  convertCountriesData,
+  convertGlobalData,
 } from './utils.Observer';
 
 export default class ActionCreator {
   constructor(observer) {
     this.observer = observer;
-    this.fetcher = new Fetcher(`${COVID_API}`, COUNTRY_INFO_API);
   }
 
   setLoading(isLoading = true) {
@@ -28,12 +28,19 @@ export default class ActionCreator {
     this.setLoading(true);
 
     try {
-      const covidData = await this.fetcher.getCovidInfoAll();
-      const countriesData = await this.fetcher.getCountriesInfo();
-      const merged = mergeData(covidData, countriesData);
-      const data = addRelativeTypesData(merged);
-
-      data.Countries = countriesArrayToMap(data.Countries);
+      const globalCovidTimeline = await fetchGlobalCovid();
+      const countriesCovidData = await fetchCountriesCovid();
+      const countriesInfo = await fetchCountriesInfo();
+      const countriesArr = convertCountriesData(
+        countriesCovidData,
+        countriesInfo,
+      );
+      const Global = convertGlobalData(globalCovidTimeline);
+      const Countries = countriesArrayToMap(countriesArr);
+      const data = {
+        Global,
+        Countries,
+      };
 
       this.observer.dispatch({
         type: DATA_FETCHED,
