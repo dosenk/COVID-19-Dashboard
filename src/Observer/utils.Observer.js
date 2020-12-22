@@ -84,9 +84,11 @@ export const convertCountriesData = (countriesCovidData, countriesInfo) => {
 
     const dataTypesObj = getDataTypesObj(covidDataItem);
 
-    const timeline = covidDataItem.timeline.map((timelineItem) =>
-      convertTimelineObj(timelineItem, covidDataItem.population),
-    );
+    const timeline = covidDataItem.timeline.map((timelineItem) => {
+      const result = convertTimelineObj(timelineItem, covidDataItem.population);
+
+      return result;
+    });
 
     return {
       ...dataTypesObj,
@@ -102,9 +104,7 @@ export const convertCountriesData = (countriesCovidData, countriesInfo) => {
 export const convertGlobalData = (globalCovid) => {
   if (!globalCovid.data.length) throw new Error('fetched data are empty');
 
-  return globalCovid.data.map((dataItem) =>
-    convertTimelineObj(dataItem, WORLD_POPULATION),
-  );
+  return globalCovid.data.map((dataItem) => convertTimelineObj(dataItem, WORLD_POPULATION));
 };
 
 export const countriesArrayToMap = (countriesArray) => {
