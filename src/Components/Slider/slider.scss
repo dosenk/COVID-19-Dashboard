@@ -1,11 +1,13 @@
-.map-slider,
-.chart-slider {
+.slider {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 25px;
   width: 100%;
   overflow: hidden;
+  &__info-block {
+    margin: 0 2px;
+  }
   .slider-btn {
     width: 25px;
     height: 25px;

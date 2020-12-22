@@ -9,8 +9,8 @@ export default class App {
     this.observer = new Observer();
 
     this.table = new Table(parentElement, this.observer);
-    this.chart = new Chart(parentElement, this.observer);
     this.map = new Map(parentElement, this.observer);
+    this.chart = new Chart(parentElement, this.observer);
   }
 
   async start() {

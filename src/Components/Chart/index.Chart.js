@@ -5,16 +5,17 @@ import { HOVER_BACKGROUND_COLOR } from './constants';
 export default class Chart {
   constructor(parentElement, observer) {
     this.parentElement = parentElement;
+    this.slider = new Slider(observer);
     this.observer = observer;
     observer.subscribe(this);
-    this.container = Chart.createContainer();
-    this.sliderChart = new Slider(this.container, this.observer, 'chart-slider');
+    this.createContainer();
   }
 
   start() {
+    this.container.append(this.slider.getContainer());
     this.parentElement.append(this.container);
+    this.slider.start();
     this.ctx = document.getElementById('myChart').getContext('2d');
-    this.sliderChart.start();
   }
 
   update(state) {
@@ -31,15 +32,14 @@ export default class Chart {
     }
   }
 
-  static createContainer() {
-    const container = document.createElement('div');
-    container.classList.add('chart');
+  createContainer() {
+    this.container = document.createElement('div');
+    this.container.classList.add('chart');
     const canvas = document.createElement('canvas');
     canvas.id = 'myChart';
     canvas.width = 600;
     canvas.height = 500;
-    container.append(canvas);
-    return container;
+    this.container.append(canvas);
   }
 
   render(countryCases, dataType) {
