@@ -102,7 +102,9 @@ export const convertCountriesData = (countriesCovidData, countriesInfo) => {
 };
 
 export const convertGlobalData = (globalCovid) => {
-  if (!globalCovid.data.length) throw new Error('fetched data are empty');
+  if (!globalCovid.data || !globalCovid.data.length) {
+    throw new Error('fetched data are empty');
+  }
 
   return globalCovid.data.map((dataItem) => convertTimelineObj(dataItem, WORLD_POPULATION));
 };
