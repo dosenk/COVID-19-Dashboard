@@ -66,8 +66,9 @@ export default class Slider {
   }
 
   changeDataTypeKey(num) {
+    const lengthTypeKeys = DATA_TYPES_KEYS.length - 1;
     this.dataTypeKey += num;
-    if (this.dataTypeKey < 0) this.dataTypeKey = 11;
-    else if (this.dataTypeKey > 11) this.dataTypeKey = 0;
+    if (this.dataTypeKey < 0) this.dataTypeKey = lengthTypeKeys;
+    else if (this.dataTypeKey > lengthTypeKeys) this.dataTypeKey = 0;
   }
 }

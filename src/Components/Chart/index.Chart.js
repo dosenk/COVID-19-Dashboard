@@ -1,4 +1,6 @@
 import ChartJS from 'chart.js';
+import Slider from '../Slider/index.Slider';
+import { HOVER_BACKGROUND_COLOR } from './constants';
 
 export default class Chart {
   constructor(parentElement, observer) {
@@ -6,12 +8,13 @@ export default class Chart {
     this.observer = observer;
     observer.subscribe(this);
     this.container = Chart.createContainer();
+    this.sliderChart = new Slider(this.container, this.observer, 'chart-slider');
   }
 
-  start(slider) {
+  start() {
     this.parentElement.append(this.container);
     this.ctx = document.getElementById('myChart').getContext('2d');
-    slider.start();
+    this.sliderChart.start();
   }
 
   update(state) {
@@ -39,10 +42,6 @@ export default class Chart {
     return container;
   }
 
-  getContainer() {
-    return this.container;
-  }
-
   render(countryCases, dataType) {
     this.chartData = countryCases
       .map((elem) => elem[dataType])
@@ -68,7 +67,7 @@ export default class Chart {
           data: chartDataX,
           barPercentage: 1,
           categoryPercentage: 1,
-          hoverBackgroundColor: 'rgba(255, 99, 55, 1)',
+          hoverBackgroundColor: HOVER_BACKGROUND_COLOR,
         }],
       },
       options: {

@@ -1,7 +1,6 @@
 import Table from '../Table/index.Table';
 import Chart from '../Chart/index.Chart';
 import Observer from '../../Observer/index.Observer';
-import Slider from '../Slider/index.Slider';
 import Map from '../Map/index.Map';
 
 export default class App {
@@ -11,7 +10,6 @@ export default class App {
 
     this.table = new Table(parentElement, this.observer);
     this.chart = new Chart(parentElement, this.observer);
-    this.sliderChart = new Slider(this.chart.getContainer(), this.observer, 'chart-slider');
     this.map = new Map(parentElement, this.observer);
   }
 
@@ -19,7 +17,7 @@ export default class App {
     this.observer.actions.fetchApiData();
 
     this.table.start();
-    this.chart.start(this.sliderChart);
+    this.chart.start();
     this.map.start();
   }
 }
