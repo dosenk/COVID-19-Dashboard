@@ -1,6 +1,9 @@
 import Slider from '../Slider/index.Slider';
 import {
-  TABLE_CLASS, TABLE_WRAPPER_CLASS, THEAD_CATEGORIES, THEAD_TBODY_CATEGORIES,
+  TABLE_CLASS,
+  TABLE_WRAPPER_CLASS,
+  THEAD_CATEGORIES,
+  THEAD_TBODY_CATEGORIES,
 } from './constants';
 
 export default class Table {
@@ -62,10 +65,12 @@ export default class Table {
     try {
       const perThFlag = state.dataType.indexOf('100') >= 0;
       const { country } = state;
-      const resultData = (country === 'All')
+      const resultData = country === 'All'
         ? state.data.Global[0]
         : state.data.Countries.get(country);
-      if (resultData !== undefined) this.setData(resultData, country, perThFlag);
+      if (resultData !== undefined) {
+        this.setData(resultData, country, perThFlag);
+      }
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log('Country not found');
@@ -73,7 +78,7 @@ export default class Table {
   }
 
   setData(data, country, perThFlag) {
-    this.tableCaptionCountry.innerText = country === 'All' ? 'All World' : country;
+    this.tableCaptionCountry.innerText = country === 'All' ? `All World ${data.date}` : `${country}  ${data.date}`;
     if (data.flag) {
       this.tableCaptionFlag.classList.add('active-flag');
       this.tableCaptionFlag.src = data.flag;
@@ -81,7 +86,9 @@ export default class Table {
     const allTd = document.querySelectorAll('*[data]');
     allTd.forEach((item) => {
       const td = item;
-      const dataAttr = perThFlag ? td.getAttribute('data-th') : td.getAttribute('data');
+      const dataAttr = perThFlag
+        ? td.getAttribute('data-th')
+        : td.getAttribute('data');
       td.innerText = data[dataAttr];
     });
   }
