@@ -1,4 +1,5 @@
 import Table from '../Table/index.Table';
+import List from '../List/index.List';
 import Chart from '../Chart/index.Chart';
 import Observer from '../../Observer/index.Observer';
 import Map from '../Map/index.Map';
@@ -7,6 +8,7 @@ import {
   CHART_CLASSNAME,
   MAP_CLASSNAME,
   TABLE_CLASSNAME,
+  LIST_CLASSNAME,
 } from '../../Constants/classNames';
 
 export default class App {
@@ -16,6 +18,10 @@ export default class App {
 
     this.table = new Table(
       createContainer(mainElement, TABLE_CLASSNAME),
+      this.observer,
+    );
+    this.list = new List(
+      createContainer(mainElement, LIST_CLASSNAME),
       this.observer,
     );
     this.chart = new Chart(
@@ -34,6 +40,7 @@ export default class App {
     this.observer.actions.fetchApiData();
 
     this.table.start();
+    this.list.start();
     this.chart.start();
     this.map.start();
   }
