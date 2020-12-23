@@ -6,6 +6,32 @@ export default class Table {
 
     this.observer = observer;
     observer.subscribe(this);
+
+    this.array = ['Flag', 'Country', 'Population', 'TotalConfirmed', 'TotalDeaths', 'TotalRecovered', 'NewConfirmed', 'NewDeaths', 'NewRecovered', 'By100kConfirmed', 'By100kDeaths', 'By100kRecovered', 'NewConfirmedBy100k', 'NewDeaths', 'NewDeathsBy100k'];
+    this.arrayConfirmed = ['Flag', 'Country', 'Population', 'TotalConfirmed', 'NewConfirmed', 'By100kConfirmed', 'NewConfirmedBy100k'];
+    this.arrayDeaths = ['Flag', 'Country', 'Population', 'TotalDeaths', 'NewDeaths', 'By100kDeaths', 'NewDeaths'];
+    this.arrayRecovered = ['Flag', 'Country', 'Population', 'TotalRecovered', 'NewRecovered', 'By100kRecovered', 'NewDeathsBy100k'];
+  }
+
+  update(state, eventType) {
+    if (eventType === 'DATA_FETCHED') {
+      this.data = state.data.Countries;
+      this.countries = Array.from(state.data.Countries).map((el) => el[el.length - 1]);
+      this.global = state.data.Global.slice(0, 1);
+
+      console.log(this.global);
+      console.log(this.data);
+      console.log(this.countries);
+    }
+  }
+
+  createSectionTable() {
+    const section = document.createElement('section');
+    section.className = 'list-section';
+    this.parent.appendChild(section);
+    // section.style.height = `${window.innerHeight * 0.9}px`;
+    // section.style.maxWidth = `${window.innerWidth * 0.4}px`;
+    this.section = section;
   }
 
   addChangeTypeBtn(type) {
@@ -34,9 +60,5 @@ export default class Table {
     });
 
     this.parent.append(this.div);
-  }
-
-  update(state, eventType) {
-    console.log(eventType, state);
   }
 }
