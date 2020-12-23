@@ -5,9 +5,11 @@ import Map from '../Map/index.Map';
 import createContainer from '../fullscreenWrapper/index.ComponentWrapper';
 import {
   CHART_CLASSNAME,
+  LIST_CLASSNAME,
   MAP_CLASSNAME,
   TABLE_CLASSNAME,
 } from '../../Constants/classNames';
+import CountryList from '../CountryList/index.CountryList';
 
 export default class App {
   constructor() {
@@ -16,6 +18,10 @@ export default class App {
 
     this.table = new Table(
       createContainer(mainElement, TABLE_CLASSNAME),
+      this.observer,
+    );
+    this.list = new CountryList(
+      createContainer(mainElement, LIST_CLASSNAME),
       this.observer,
     );
     this.chart = new Chart(
@@ -36,5 +42,6 @@ export default class App {
     this.table.start();
     this.chart.start();
     this.map.start();
+    this.list.start();
   }
 }
