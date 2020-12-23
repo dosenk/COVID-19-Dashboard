@@ -53,8 +53,8 @@ export default class Key {
 
   moveCursorLeft(ShiftLeft) {
     if (
-      !ShiftLeft.classList.contains('button_active')
-      && this.area.selectionStart === 0
+      !ShiftLeft.classList.contains('button_active') &&
+      this.area.selectionStart === 0
     ) {
       this.area.setSelectionRange(
         this.area.selectionStart,
@@ -66,8 +66,8 @@ export default class Key {
         this.area.selectionStart - 1,
       );
     } else if (
-      this.area.selectionStart !== this.area.selectionEnd
-      && this.area.selectionDirection === 'forward'
+      this.area.selectionStart !== this.area.selectionEnd &&
+      this.area.selectionDirection === 'forward'
     ) {
       this.area.setSelectionRange(
         this.area.selectionStart,
@@ -85,8 +85,8 @@ export default class Key {
 
   moveCursorRight(ShiftLeft) {
     if (
-      !ShiftLeft.classList.contains('button_active')
-      && this.area.value.length === this.area.selectionEnd
+      !ShiftLeft.classList.contains('button_active') &&
+      this.area.value.length === this.area.selectionEnd
     ) {
       this.area.setSelectionRange(
         this.area.selectionEnd,
@@ -98,8 +98,8 @@ export default class Key {
         this.area.selectionEnd + 1,
       );
     } else if (
-      this.area.selectionStart === this.area.selectionEnd
-      || this.area.selectionDirection === 'forward'
+      this.area.selectionStart === this.area.selectionEnd ||
+      this.area.selectionDirection === 'forward'
     ) {
       this.area.setSelectionRange(
         this.area.selectionStart,
@@ -126,7 +126,6 @@ export default class Key {
     const ShiftLeft = document.getElementById('ShiftLeft');
     const ShiftRight = document.getElementById('ShiftRight');
     const AltLeft = document.getElementById('AltLeft');
-    const AltRight = document.getElementById('AltRight');
 
     const keyId = event.target.id;
 
@@ -156,7 +155,6 @@ export default class Key {
           ShiftLeft.classList.remove('button_active');
           ShiftRight.classList.remove('button_active');
           AltLeft.classList.remove('button_active');
-          AltRight.classList.remove('button_active');
           this.keyboardInst.changeLang();
         } else {
           this.keyboardInst.toggleCase();
@@ -170,13 +168,11 @@ export default class Key {
       case 'AltLeft':
       case 'AltRight':
         AltLeft.classList.toggle('button_active');
-        AltRight.classList.toggle('button_active');
 
         if (ShiftLeft.classList.contains('button_active')) {
           ShiftLeft.classList.remove('button_active');
           ShiftRight.classList.remove('button_active');
           AltLeft.classList.remove('button_active');
-          AltRight.classList.remove('button_active');
           this.keyboardInst.changeLang();
         }
         break;
