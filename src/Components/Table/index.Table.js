@@ -1,5 +1,5 @@
 import * as types from '../../Constants/dataTypes';
-// import Slider from '../Slider/index.Slider';
+import Slider from '../Slider/index.Slider';
 import {
   TABLE_CLASS, TABLE_WRAPPER_CLASS, THEAD_CATEGORIES, THEAD_TBODY_CATEGORIES,
 } from './constants';
@@ -7,9 +7,12 @@ import {
 export default class Table {
   constructor(parentElement, observer) {
     this.parentElement = parentElement;
+    this.slider = new Slider(observer, true);
     this.observer = observer;
     observer.subscribe(this);
     this.createContainer();
+    this.parentElement.append(this.slider.getContainer());
+    this.slider.start();
   }
 
   addChangeTypeBtn(type) {
@@ -38,8 +41,7 @@ export default class Table {
     this.parentElement.append(this.div);
   }
 
-  update(state, eventType) {
-    console.log(eventType, state);
+  update(state) {
     this.updateData(state);
   }
 
@@ -48,8 +50,8 @@ export default class Table {
     this.container.className = TABLE_CLASS;
     const tableWrapper = document.createElement('div');
     tableWrapper.className = TABLE_WRAPPER_CLASS;
-    const table = document.createElement('table'); // 0
-    const tableCaption = document.createElement('caption'); // 1
+    const table = document.createElement('table');
+    const tableCaption = document.createElement('caption');
     this.tableCaptionCountry = document.createElement('div');
     this.tableCaptionCountry.className = 'country-name';
     this.tableCaptionFlag = document.createElement('img');
@@ -62,14 +64,17 @@ export default class Table {
       th.innerText = cat;
       tableHeadTr.append(th);
     });
-    tableHead.append(tableHeadTr); // 2
-    const tableBody = document.createElement('tbody'); // 3
+    tableHead.append(tableHeadTr);
+    const tableBody = document.createElement('tbody');
     THEAD_TBODY_CATEGORIES.forEach((arr) => {
       const tr = document.createElement('tr');
       for (let i = 0; i < 3; i += 1) {
         const td = document.createElement('td');
         if (i === 0) td.innerText = arr[i];
-        else td.setAttribute('data', arr[i]);
+        else {
+          td.setAttribute('data', arr[i][0]);
+          td.setAttribute('data-th', arr[i][1]);
+        }
         tr.append(td);
       }
       tableBody.append(tr);
@@ -82,18 +87,19 @@ export default class Table {
 
   updateData(state) {
     try {
+      const perThFlag = state.dataType.indexOf('100') >= 0;
       const { country } = state;
       const resultData = (country === 'All')
         ? state.data.Global[0]
         : state.data.Countries.get(country);
-      this.setData(resultData, country);
+      this.setData(resultData, country, perThFlag);
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.log(error);
+      console.log('Country not found');
     }
   }
 
-  setData(data, country) {
+  setData(data, country, perThFlag) {
     this.tableCaptionCountry.innerText = country === 'All' ? 'All World' : country;
     if (data.flag) {
       this.tableCaptionFlag.classList.add('active-flag');
@@ -102,7 +108,7 @@ export default class Table {
     const allTd = document.querySelectorAll('*[data]');
     allTd.forEach((item) => {
       const td = item;
-      const dataAttr = td.getAttribute('data');
+      const dataAttr = perThFlag ? td.getAttribute('data-th') : td.getAttribute('data');
       td.innerText = data[dataAttr];
     });
   }

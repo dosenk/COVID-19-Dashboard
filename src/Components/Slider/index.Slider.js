@@ -2,9 +2,10 @@ import { LEFT_ARROW, RIGHT_ARROW, MAIN_INFO_BLOCK } from './constants';
 import { DATA_TYPES_VALUES, DATA_TYPES_DECRYPTION } from '../../Constants/index.Constants';
 
 export default class Slider {
-  constructor(observer) {
+  constructor(observer, tableFlag = false) {
     this.observer = observer;
-    if (observer !== null) observer.subscribe(this);
+    this.tableFlag = tableFlag;
+    observer.subscribe(this);
     this.createContainer();
   }
 
@@ -21,8 +22,16 @@ export default class Slider {
   }
 
   setDataType(dataType) {
-    const dataTypeIndex = DATA_TYPES_VALUES.indexOf(dataType);
-    this.infoBlock.innerText = DATA_TYPES_DECRYPTION[dataTypeIndex];
+    let data;
+    if (this.tableFlag) {
+      const dataTypeIndex = DATA_TYPES_VALUES.indexOf(dataType);
+      this.tableDataTypeCLOSE = DATA_TYPES_DECRYPTION[dataTypeIndex];
+      data = dataType.indexOf('100') >= 0 ? 'All Cases / 100 th' : 'All Cases';
+    } else {
+      const dataTypeIndex = DATA_TYPES_VALUES.indexOf(dataType);
+      data = DATA_TYPES_DECRYPTION[dataTypeIndex];
+    }
+    this.infoBlock.innerText = data;
   }
 
   createContainer() {
@@ -47,11 +56,19 @@ export default class Slider {
   }
 
   changeInfo(offset) {
-    const oldDataTypeIndex = DATA_TYPES_DECRYPTION.indexOf(this.infoBlock.innerText);
-    const newDataTypeIndex = Slider.changeDataTypeKey(oldDataTypeIndex + offset);
+    let offsetNum = offset;
+    let oldDataType = this.infoBlock.innerText;
+    if (this.tableFlag) {
+      offsetNum = 0;
+      oldDataType = (this.infoBlock.innerText.indexOf('100')) >= 0
+        ? this.tableDataTypeCLOSE.slice(0, this.tableDataTypeCLOSE.indexOf('/'))
+        : this.tableDataTypeCLOSE.concat(' / 100 th');
+    }
+    const oldDataTypeIndex = DATA_TYPES_DECRYPTION.indexOf(oldDataType.trim());
+    const newDataTypeIndex = Slider.changeDataTypeKey(oldDataTypeIndex + offsetNum);
     const newDataType = DATA_TYPES_VALUES[newDataTypeIndex];
-    const newDataTypeText = DATA_TYPES_DECRYPTION[newDataTypeIndex];
-    this.infoBlock.innerText = newDataTypeText;
+    this.newDataTypeText = DATA_TYPES_DECRYPTION[newDataTypeIndex];
+    this.infoBlock.innerText = this.newDataTypeText;
     this.observer.actions.setDataType(newDataType);
   }
 

@@ -1,5 +1,12 @@
 .table--wrapper {
+  width: 300px;
   table {
+    th,
+    tr,
+    td {
+      border: 1px solid black;
+    }
+
     caption {
       .country-name {
         display: inline-block;
