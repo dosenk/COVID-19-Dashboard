@@ -1,1 +1,70 @@
+.list-section {
+  margin-top: 50px;
+}
 
+.list-section table tr td {
+  word-wrap: break-word;
+  max-width: 160px;
+  height: 90px;
+  margin: 1px;
+}
+
+.list-section table tr td a:first-child {
+  padding-right: 5px;
+}
+
+.list-section table tr td a:nth-child(2),
+.list-section table tr td a:nth-child(3) {
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.list-section table tr td a:nth-child(2):hover,
+.list-section table tr td a:nth-child(3):hover {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.list-section {
+  font-size: 16px;
+}
+
+.list-section .checkbox-list {
+  margin: 2px;
+}
+
+.list-section .checkbox-list td {
+  width: 150px;
+  height: 35px;
+  word-wrap: break-word;
+  margin: 0 5px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-section .checkbox-list td input:hover {
+  cursor: pointer;
+}
+
+.list-section {
+  overflow: scroll;
+  background-color: rgb(197, 197, 195);
+  font-size: 14px;
+}
+
+.list-section tr td {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2rem;
+  width: 160px;
+  margin: 1px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  border: 1px solid #000;
+  word-wrap: break-word;
+}
+
+.list-section tr {
+  margin: auto auto;
+}
