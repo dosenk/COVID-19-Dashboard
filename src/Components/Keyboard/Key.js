@@ -53,8 +53,8 @@ export default class Key {
 
   moveCursorLeft(ShiftLeft) {
     if (
-      !ShiftLeft.classList.contains('button_active') &&
-      this.area.selectionStart === 0
+      !ShiftLeft.classList.contains('button_active')
+      && this.area.selectionStart === 0
     ) {
       this.area.setSelectionRange(
         this.area.selectionStart,
@@ -66,8 +66,8 @@ export default class Key {
         this.area.selectionStart - 1,
       );
     } else if (
-      this.area.selectionStart !== this.area.selectionEnd &&
-      this.area.selectionDirection === 'forward'
+      this.area.selectionStart !== this.area.selectionEnd
+      && this.area.selectionDirection === 'forward'
     ) {
       this.area.setSelectionRange(
         this.area.selectionStart,
@@ -85,8 +85,8 @@ export default class Key {
 
   moveCursorRight(ShiftLeft) {
     if (
-      !ShiftLeft.classList.contains('button_active') &&
-      this.area.value.length === this.area.selectionEnd
+      !ShiftLeft.classList.contains('button_active')
+      && this.area.value.length === this.area.selectionEnd
     ) {
       this.area.setSelectionRange(
         this.area.selectionEnd,
@@ -98,8 +98,8 @@ export default class Key {
         this.area.selectionEnd + 1,
       );
     } else if (
-      this.area.selectionStart === this.area.selectionEnd ||
-      this.area.selectionDirection === 'forward'
+      this.area.selectionStart === this.area.selectionEnd
+      || this.area.selectionDirection === 'forward'
     ) {
       this.area.setSelectionRange(
         this.area.selectionStart,

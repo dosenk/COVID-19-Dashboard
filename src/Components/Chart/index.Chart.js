@@ -1,6 +1,6 @@
 import ChartJS from 'chart.js';
 import Slider from '../Slider/index.Slider';
-import { HOVER_BACKGROUND_COLOR } from './constants';
+import HOVER_BACKGROUND_COLOR from './constants';
 
 export default class Chart {
   constructor(parentElement, observer) {
@@ -22,10 +22,9 @@ export default class Chart {
     try {
       const recivedState = state;
       const { dataType } = recivedState;
-      const countryCases =
-        recivedState.country === 'All'
-          ? recivedState.data.Global
-          : recivedState.data.Countries.get(recivedState.country).timeline;
+      const countryCases = recivedState.country === 'All'
+        ? recivedState.data.Global
+        : recivedState.data.Countries.get(recivedState.country).timeline;
       this.render(countryCases, dataType);
     } catch (error) {
       // eslint-disable-next-line no-console
