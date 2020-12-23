@@ -31,6 +31,56 @@ export default class List {
     }, 2000);
   }
 
+  getCountry(countryObj) {
+    while (this.content.firstChild) {
+      this.content.removeChild(this.content.firstChild);
+    }
+    const ul = document.createElement('ul');
+    ul.style.display = 'flex';
+    this.array.forEach((keyName, keyIndex) => {
+      const checkbox = document.querySelector(`.checkbox${keyName}`);
+      if (checkbox.checked) {
+        const li = document.createElement('li');
+        li.className = `title-${keyName}`;
+        if (!keyIndex) {
+          li.style.width = '50px';
+          li.style.backgroundImage = `url('${countryObj[keyName.replace('F', 'f')]}')`;
+        } else {
+          li.innerHTML = `${countryObj[keyName.replace('Name', 'name').replace('P', 'p')]} `;
+        }
+        ul.appendChild(li);
+      }
+    });
+    this.content.appendChild(ul);
+  }
+
+  fillContent() {
+    while (this.content.firstChild) {
+      this.content.removeChild(this.content.firstChild);
+    }
+
+    this.countries.forEach((country) => {
+      const ul = document.createElement('ul');
+      ul.className = `${country.Slug}-list`;
+      ul.style.display = 'flex';
+      this.array.forEach((keyName, keyIndex) => {
+        const checkbox = document.querySelector(`.checkbox${keyName}`);
+        if (checkbox.checked) {
+          const li = document.createElement('li');
+          li.className = `title-${keyName}`;
+          if (!keyIndex) {
+            li.style.width = '50px';
+            li.style.backgroundImage = `url('${country[keyName.replace('F', 'f')]}')`;
+          } else {
+            li.innerHTML = `${country[keyName.replace('Name', 'name').replace('P', 'p')]} `;
+          }
+          ul.appendChild(li);
+        }
+      });
+      this.content.appendChild(ul);
+    });
+  }
+
   addCheckbox() {
     const div = document.createElement('div');
     div.className = 'checkbox-list';
