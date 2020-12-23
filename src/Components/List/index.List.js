@@ -31,6 +31,45 @@ export default class List {
     }, 2000);
   }
 
+  fillList() {
+    this.addCheckbox();
+
+    const divTextField = document.createElement('div');
+    const textField = document.createElement('input');
+    textField.type = 'textarea';
+    textField.placeholder = 'Enter country';
+    divTextField.appendChild(textField);
+
+    const inputEnter = document.createElement('input');
+    inputEnter.type = 'button';
+    inputEnter.value = 'Search';
+    inputEnter.addEventListener('click', () => {
+      if (this.data.get(textField.value)) {
+        this.getCountry(this.data.get(textField.value));
+      } else if (textField.value === '') {
+        this.fillContent();
+      } else {
+        textField.value = '';
+        textField.placeholder = 'Re-enter country';
+      }
+    });
+    divTextField.appendChild(inputEnter);
+
+    this.section.appendChild(divTextField);
+
+    const a = document.createElement('a');
+    a.innerHTML = '&#9776;';
+    this.section.appendChild(a);
+
+    this.createListTitles();
+
+    const content = document.createElement('div');
+    this.content = content;
+    this.section.appendChild(content);
+
+    this.fillContent();
+  }
+
   getCountry(countryObj) {
     while (this.content.firstChild) {
       this.content.removeChild(this.content.firstChild);
