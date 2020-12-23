@@ -5,6 +5,61 @@ body {
   display: none;
 }
 
+.block {
+  display: block;
+}
+
 main {
+  max-height: 100%;
+
   position: relative;
+  display: grid;
+  grid-template-areas:
+    'list map table'
+    'list map chart';
+  grid-template-columns: 440px minmax(200px, auto) 450px;
+  grid-template-rows: 175px minmax(600px, auto);
+
+  .table--wrapper {
+    grid-area: table;
+  }
+
+  .map--wrapper {
+    grid-area: map;
+  }
+
+  .chart--wrapper {
+    grid-area: chart;
+  }
+
+  .list--wrapper {
+    grid-area: list;
+  }
+}
+
+@media (max-width: 1300px) {
+  main {
+    grid-template-areas:
+      'list chart'
+      'list map'
+      'table map';
+    grid-template-columns: 450px auto;
+    grid-template-rows: 400px minmax(120px, auto) 157px;
+
+    #map {
+      min-height: 200px;
+    }
+  }
+}
+
+@media (max-width: 850px) {
+  main {
+    grid-template-areas:
+      'list'
+      'table'
+      'map'
+      'chart';
+    grid-template-columns: auto;
+    grid-template-rows: 500px 175px 650px 430px;
+  }
 }

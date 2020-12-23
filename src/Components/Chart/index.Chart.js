@@ -22,9 +22,10 @@ export default class Chart {
     try {
       const recivedState = state;
       const { dataType } = recivedState;
-      const countryCases = recivedState.country === 'All'
-        ? recivedState.data.Global
-        : recivedState.data.Countries.get(recivedState.country).timeline;
+      const countryCases =
+        recivedState.country === 'All'
+          ? recivedState.data.Global
+          : recivedState.data.Countries.get(recivedState.country).timeline;
       this.render(countryCases, dataType);
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -37,18 +38,15 @@ export default class Chart {
     this.container.classList.add('chart');
     const canvas = document.createElement('canvas');
     canvas.id = 'myChart';
-    canvas.width = 600;
-    canvas.height = 500;
+    canvas.width = 350;
+    canvas.height = 350;
     this.container.append(canvas);
   }
 
   render(countryCases, dataType) {
-    this.chartData = countryCases
-      .map((elem) => elem[dataType])
-      .reverse();
+    this.chartData = countryCases.map((elem) => elem[dataType]).reverse();
     this.chartDates = countryCases
-      .map((elem) => new Date(elem.date)
-        .toLocaleDateString())
+      .map((elem) => new Date(elem.date).toLocaleDateString())
       .reverse();
     if (this.myChart === undefined) {
       this.addData(this.chartData, this.chartDates);
@@ -62,13 +60,15 @@ export default class Chart {
       type: 'bar',
       data: {
         labels: chartDataY,
-        datasets: [{
-          label: 'cases',
-          data: chartDataX,
-          barPercentage: 1,
-          categoryPercentage: 1,
-          hoverBackgroundColor: HOVER_BACKGROUND_COLOR,
-        }],
+        datasets: [
+          {
+            label: 'cases',
+            data: chartDataX,
+            barPercentage: 1,
+            categoryPercentage: 1,
+            hoverBackgroundColor: HOVER_BACKGROUND_COLOR,
+          },
+        ],
       },
       options: {
         responsive: false,

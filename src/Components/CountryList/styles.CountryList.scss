@@ -17,9 +17,9 @@
 
   &--ul {
     width: 100%;
-    height: 100%;
     margin: 10px 0;
     overflow-y: scroll;
+    flex: 1 1 0;
   }
 
   &--li {
@@ -60,11 +60,19 @@
 
   &--kd_container {
     width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
     height: auto;
     padding: 10px 0;
   }
 
   &--kd_container-hidden {
     display: none;
+  }
+}
+
+.fullscreen {
+  .list {
+    min-height: calc(100vh - 150px);
   }
 }

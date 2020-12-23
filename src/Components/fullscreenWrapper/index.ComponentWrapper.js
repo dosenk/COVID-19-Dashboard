@@ -1,4 +1,4 @@
-import { REMOVED_CLASSNAME } from '../../Constants/classNames';
+import { BLOCK_CLASSNAME, REMOVED_CLASSNAME } from '../../Constants/classNames';
 import {
   WRAPPER_CLASS_NAME,
   FULLSCREEN_BTN_ENTER,
@@ -11,11 +11,13 @@ const fullscreen = (e) => {
   const btn = e.target;
   const wrapper = btn.parentElement;
   const components = document.querySelectorAll(`.${WRAPPER_CLASS_NAME}`);
+  const mainEl = document.querySelector('main');
 
   components.forEach((component) => {
     component.classList.toggle(REMOVED_CLASSNAME);
   });
 
+  mainEl.classList.toggle(BLOCK_CLASSNAME);
   btn.classList.toggle(FULLSCREEN_BTN_EXIT);
   btn.classList.toggle(FULLSCREEN_BTN_ENTER);
   wrapper.classList.toggle(FULLSCREEN_CLASS_NAME);
