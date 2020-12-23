@@ -15,6 +15,7 @@ import CountryList from '../CountryList/index.CountryList';
 
 export default class App {
   constructor() {
+    const parentElem = document.body;
     this.mainElement = document.createElement('main');
     this.observer = new Observer();
 
@@ -23,7 +24,7 @@ export default class App {
       this.observer,
     );
     this.list = new CountryList(
-      createContainer(mainElement, LIST_CLASSNAME),
+      createContainer(this.mainElement, LIST_CLASSNAME),
       this.observer,
     );
     this.chart = new Chart(
@@ -35,15 +36,15 @@ export default class App {
       this.observer,
     );
 
-    document.body.append(this.mainElement);
+    renderHeader(parentElem);
+    parentElem.append(this.mainElement);
+    renderFooter(parentElem);
   }
 
   async start() {
     this.observer.actions.fetchApiData();
-    renderHeader(this.mainElement);
     this.chart.start();
     this.map.start();
     this.list.start();
-    renderFooter(this.mainElement);
   }
 }

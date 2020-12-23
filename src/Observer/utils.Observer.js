@@ -96,6 +96,7 @@ export const convertCountriesData = (countriesCovidData, countriesInfo) => {
       ...countryInfoItem,
       name: covidDataItem.name,
       population: covidDataItem.population,
+      date: covidDataItem.updated_at,
       timeline,
     };
   });

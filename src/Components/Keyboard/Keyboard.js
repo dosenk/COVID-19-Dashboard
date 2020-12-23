@@ -71,8 +71,6 @@ export default class Keyboard {
         [['EN', 'EN', 'RU', 'RU'], 'lang'],
         ['', 'AltLeft'],
         ['', 'Space'],
-        ['', 'AltRight'],
-        ['', 'ControlRight'],
         ['', 'sound'],
         ['◄◄◄◄', 'ArrowLeft'],
         ['►►►►', 'ArrowRight'],

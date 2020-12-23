@@ -1,1 +1,1 @@
-export const HOVER_BACKGROUND_COLOR = 'rgba(255, 99, 55, 1)';
+export default 'rgba(255, 99, 55, 1)';

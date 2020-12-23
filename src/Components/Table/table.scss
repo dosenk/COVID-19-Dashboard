@@ -1,7 +1,10 @@
 .table--wrapper {
-  top: 50px;
-  width: 300px;
+  width: auto;
+
   table {
+    width: 100%;
+    margin-bottom: 10px;
+
     th,
     tr,
     td {

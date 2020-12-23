@@ -60,7 +60,8 @@
 .fullscreen {
   width: auto;
   height: auto;
-  position: absolute;
+  position: relative;
+  display: block;
   top: 0;
   bottom: 0;
   left: 0;
