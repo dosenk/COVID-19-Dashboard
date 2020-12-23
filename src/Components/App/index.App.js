@@ -2,7 +2,8 @@ import Table from '../Table/index.Table';
 import Chart from '../Chart/index.Chart';
 import Observer from '../../Observer/index.Observer';
 import Map from '../Map/index.Map';
-import footer from '../Footer/footer';
+import renderFooter from '../Footer/footer';
+import renderHeader from '../Header/header';
 import createContainer from '../fullscreenWrapper/index.ComponentWrapper';
 import {
   CHART_CLASSNAME,
@@ -33,10 +34,10 @@ export default class App {
 
   async start() {
     this.observer.actions.fetchApiData();
-
+    renderHeader(this.mainElement);
     this.table.start();
     this.chart.start();
     this.map.start();
-    footer(this.mainElement);
+    renderFooter(this.mainElement);
   }
 }
