@@ -1,3 +1,4 @@
+import KeyboardApp from '../Keyboard/KeyboardApp';
 import {
   CONTAINER_CLASSNAME,
   SEARCH_CLASSNAME,
@@ -12,6 +13,8 @@ import {
   COUNTER_CLASSNAME,
   CLEAR_CLASSNAME,
   KEYBOARD_CLASSNAME,
+  KB_CONTAINER_CLASSNAME,
+  KB_HIDDEN_CLASSNAME,
 } from './constants.CountryList';
 import './styles.CountryList.scss';
 
@@ -24,6 +27,9 @@ export default class CountryList {
     this.input = null;
     this.list = null;
     this.clearBtn = null;
+    this.keyboardBtn = null;
+    this.keyboardContainer = null;
+    this.keyboard = null;
     this.countriesArr = [];
   }
 
@@ -39,7 +45,7 @@ export default class CountryList {
   }
 
   submitHandler(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
 
     if (this.list.children.length !== 1) return;
 
@@ -56,11 +62,16 @@ export default class CountryList {
     this.observer.actions.setCountry(li.dataset.name);
   }
 
+  toggleKeyboard() {
+    this.keyboardContainer.classList.toggle(KB_HIDDEN_CLASSNAME);
+  }
+
   setHandlers() {
     this.form.addEventListener('input', this.inputHandler.bind(this));
     this.form.addEventListener('submit', this.submitHandler.bind(this));
     this.list.addEventListener('click', this.listClickHandler.bind(this));
     this.clearBtn.addEventListener('click', this.clearHandler.bind(this));
+    this.keyboardBtn.addEventListener('click', this.toggleKeyboard.bind(this));
   }
 
   createElements() {
@@ -80,17 +91,24 @@ export default class CountryList {
     this.clearBtn.classList.add(CLEAR_CLASSNAME);
     this.clearBtn.textContent = 'X';
 
-    const keyboardBtn = document.createElement('button');
-    keyboardBtn.classList.add(KEYBOARD_CLASSNAME);
-    keyboardBtn.textContent = 'Keyboard';
+    this.keyboardBtn = document.createElement('button');
+    this.keyboardBtn.classList.add(KEYBOARD_CLASSNAME);
+    this.keyboardBtn.textContent = 'Keyboard';
 
     this.form = document.createElement('form');
     this.form.classList.add(FORM_CLASSNAME);
-    this.form.append(keyboardBtn);
+    this.form.append(this.keyboardBtn);
     this.form.append(this.input);
     this.form.append(this.clearBtn);
     this.form.append(submitBtn);
     container.append(this.form);
+
+    this.keyboardContainer = document.createElement('div');
+    this.keyboardContainer.classList.add(
+      KB_CONTAINER_CLASSNAME,
+      // KB_HIDDEN_CLASSNAME,
+    );
+    container.append(this.keyboardContainer);
 
     this.list = document.createElement('ul');
     this.list.classList.add(UL_CLASSNAME);
@@ -157,5 +175,8 @@ export default class CountryList {
   start() {
     this.observer.subscribe(this);
     this.createElements(this.parentElem);
+
+    this.keyboard = new KeyboardApp(this.input, this.submitHandler.bind(this));
+    this.keyboard.init(this.keyboardContainer);
   }
 }
