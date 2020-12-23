@@ -106,6 +106,131 @@ export default class Table {
     this.fillInfoCountry('Belarus');
   }
 
+  fillTableContent() {
+    while (this.content.firstChild) {
+      this.content.removeChild(this.content.firstChild);
+    }
+    console.log(this.global);
+    console.log(this.data);
+    console.log(this.countries);
+    switch (this.contentMenu.innerHTML) {
+      case `${this.arrayMenu[0]}`:
+        this.countries.forEach((country, countryIndex) => {
+          if (!countryIndex) {
+            const ulGlobal = document.createElement('ul');
+            ulGlobal.style.display = 'flex';
+            this.arrayConfirmed.slice(3).forEach((keyName, keyIndex) => {
+              const li = document.createElement('li');
+              if (this.contentToggle.innerHTML === 'All' && keyIndex <= 1) {
+                li.innerHTML = `${this.global[0][keyName]}`;
+              } else if (this.contentToggle.innerHTML === 'All' && keyIndex >= 2) {
+                li.innerHTML = `${this.global[0][keyName]}`;
+              }
+              ulGlobal.appendChild(li);
+            });
+            this.content.appendChild(ulGlobal);
+          }
+          const ul = document.createElement('ul');
+          ul.style.display = 'flex';
+          this.arrayConfirmed.forEach((keyName, keyIndex) => {
+            const li = document.createElement('li');
+            if (keyIndex <= 2) {
+              if (keyName === 'Flag') {
+                li.style.backgroundImage = `url('${country[keyName.replace('F', 'f')]}')`;
+                li.style.width = '50px';
+              } else {
+                li.innerHTML = `${country[keyName.replace('Name', 'name').replace('P', 'p')]}`;
+              }
+            } else if (this.contentToggle.innerHTML === 'All' && keyIndex <= 4) {
+              li.innerHTML = `${country[keyName]}`;
+            } else if (this.contentToggle.innerHTML === 'All' && keyIndex > 4) {
+              li.innerHTML = `${country[keyName]}`;
+            }
+            ul.appendChild(li);
+          });
+          this.content.appendChild(ul);
+        });
+        break;
+      case `${this.arrayMenu[1]}`:
+        this.countries.forEach((country, countryIndex) => {
+          if (!countryIndex) {
+            const ulGlobal = document.createElement('ul');
+            ulGlobal.style.display = 'flex';
+            this.arrayDeaths.slice(3).forEach((keyName, keyIndex) => {
+              const li = document.createElement('li');
+              if (this.contentToggle.innerHTML === 'All' && keyIndex <= 1) {
+                li.innerHTML = `${this.global[0][keyName]}`;
+              } else if (this.contentToggle.innerHTML === 'All' && keyIndex >= 2) {
+                li.innerHTML = `${this.global[0][keyName]}`;
+              }
+              ulGlobal.appendChild(li);
+            });
+            this.content.appendChild(ulGlobal);
+          }
+          const ul = document.createElement('ul');
+          ul.style.display = 'flex';
+          this.arrayDeaths.forEach((keyName, keyIndex) => {
+            const li = document.createElement('li');
+            if (keyIndex <= 2) {
+              if (keyName === 'Flag') {
+                li.style.backgroundImage = `url('${country[keyName.replace('F', 'f')]}')`;
+                li.style.width = '50px';
+              } else {
+                li.innerHTML = `${country[keyName.replace('Name', 'name').replace('P', 'p')]}`;
+              }
+            } else if (this.contentToggle.innerHTML === 'All' && keyIndex <= 4) {
+              li.innerHTML = `${country[keyName]}`;
+            } else if (this.contentToggle.innerHTML === 'All' && keyIndex > 4) {
+              li.innerHTML = `${country[keyName]}`;
+            }
+            ul.appendChild(li);
+          });
+          this.content.appendChild(ul);
+        });
+        break;
+      case `${this.arrayMenu[2]}`:
+        this.countries.forEach((country, countryIndex) => {
+          if (!countryIndex) {
+            const ulGlobal = document.createElement('ul');
+            ulGlobal.style.display = 'flex';
+            this.arrayRecovered.slice(3).forEach((keyName, keyIndex) => {
+              const li = document.createElement('li');
+              if (this.contentToggle.innerHTML === 'All' && keyIndex <= 1) {
+                li.innerHTML = `${this.global[0][keyName]}`;
+              } else if (this.contentToggle.innerHTML === 'All' && keyIndex >= 2) {
+                li.innerHTML = `${this.global[0][keyName]}`;
+              }
+              ulGlobal.appendChild(li);
+            });
+            this.content.appendChild(ulGlobal);
+          }
+          const ul = document.createElement('ul');
+          ul.style.display = 'flex';
+          this.arrayRecovered.forEach((keyName, keyIndex) => {
+            const li = document.createElement('li');
+            if (keyIndex <= 2) {
+              if (keyName === 'Flag') {
+                li.style.backgroundImage = `url('${country[keyName.replace('F', 'f')]}')`;
+                li.style.width = '50px';
+              } else {
+                li.innerHTML = `${country[keyName.replace('Name', 'name').replace('P', 'p')]}`;
+              }
+            } else if (this.contentToggle.innerHTML === 'All' && keyIndex <= 4) {
+              li.innerHTML = `${country[keyName]}`;
+            } else if (this.contentToggle.innerHTML === 'All' && keyIndex > 4) {
+              li.innerHTML = `${country[keyName]}`;
+            }
+            ul.appendChild(li);
+          });
+          this.content.appendChild(ul);
+        });
+        break;
+      default:
+
+        break;
+    }
+  }
+
   addChangeTypeBtn(type) {
     const btn = document.createElement('button');
     btn.textContent = type;
