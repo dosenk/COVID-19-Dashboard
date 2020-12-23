@@ -1,4 +1,3 @@
-import * as types from '../../Constants/dataTypes';
 import Slider from '../Slider/index.Slider';
 import {
   TABLE_CLASS, TABLE_WRAPPER_CLASS, THEAD_CATEGORIES, THEAD_TBODY_CATEGORIES,
@@ -13,32 +12,6 @@ export default class Table {
     this.createContainer();
     this.parentElement.append(this.slider.getContainer());
     this.slider.start();
-  }
-
-  addChangeTypeBtn(type) {
-    const btn = document.createElement('button');
-    btn.textContent = type;
-
-    btn.addEventListener('click', (event) => {
-      this.observer.actions.setDataType(event.currentTarget.textContent);
-    });
-
-    this.div.append(btn);
-  }
-
-  start() {
-    this.div = document.createElement('div');
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.addEventListener('change', (event) => {
-      this.observer.actions.setCountry(event.currentTarget.value);
-    });
-    this.div.append(input);
-    Object.values(types).forEach((type) => {
-      this.addChangeTypeBtn(type);
-    });
-
-    this.parentElement.append(this.div);
   }
 
   update(state) {
@@ -92,7 +65,7 @@ export default class Table {
       const resultData = (country === 'All')
         ? state.data.Global[0]
         : state.data.Countries.get(country);
-      this.setData(resultData, country, perThFlag);
+      if (resultData !== undefined) this.setData(resultData, country, perThFlag);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log('Country not found');
