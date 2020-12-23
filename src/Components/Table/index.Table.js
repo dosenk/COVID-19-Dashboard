@@ -92,7 +92,7 @@ export default class Table {
       const resultData = (country === 'All')
         ? state.data.Global[0]
         : state.data.Countries.get(country);
-      this.setData(resultData, country, perThFlag);
+      if (resultData !== undefined) this.setData(resultData, country, perThFlag);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log('Country not found');
