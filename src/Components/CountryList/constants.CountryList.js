@@ -1,0 +1,11 @@
+export const CONTAINER_CLASSNAME = 'list';
+export const SEARCH_CLASSNAME = `${CONTAINER_CLASSNAME}--search`;
+export const FORM_CLASSNAME = `${CONTAINER_CLASSNAME}--form`;
+export const SUBMIT_CLASSNAME = `${CONTAINER_CLASSNAME}--submit`;
+export const UL_CLASSNAME = `${CONTAINER_CLASSNAME}--ul`;
+export const LI_CLASSNAME = `${CONTAINER_CLASSNAME}--li`;
+export const ICO_CLASSNAME = `${CONTAINER_CLASSNAME}--ico`;
+export const ICO_HIDDEN_CLASSNAME = `${CONTAINER_CLASSNAME}--ico-hidden`;
+export const COUNTER_CLASSNAME = `${CONTAINER_CLASSNAME}--counter`;
+export const SEARCH_PLACEHOLDER = 'Enter country';
+export const SUBMIT_LABEL = 'Search';
