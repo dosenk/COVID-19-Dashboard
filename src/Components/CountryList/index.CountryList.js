@@ -1,3 +1,4 @@
+import { COUNTRY } from '../../Observer/actionTypes';
 import KeyboardApp from '../Keyboard/KeyboardApp';
 import Slider from '../Slider/index.Slider';
 import {
@@ -16,6 +17,10 @@ import {
   KEYBOARD_CLASSNAME,
   KB_CONTAINER_CLASSNAME,
   KB_HIDDEN_CLASSNAME,
+  FLAG_CLASSNAME,
+  COUNTRY_CLASSNAME,
+  CLEAR_LABEL,
+  CLEAR_TITLE,
 } from './constants.CountryList';
 import './styles.CountryList.scss';
 
@@ -110,7 +115,8 @@ export default class CountryList {
 
     this.clearBtn = document.createElement('button');
     this.clearBtn.classList.add(CLEAR_CLASSNAME);
-    this.clearBtn.textContent = 'X';
+    this.clearBtn.textContent = CLEAR_LABEL;
+    this.clearBtn.title = CLEAR_TITLE;
 
     this.keyboardBtn = document.createElement('button');
     this.keyboardBtn.classList.add(KEYBOARD_CLASSNAME);
@@ -139,7 +145,12 @@ export default class CountryList {
       img.classList.remove(ICO_HIDDEN_CLASSNAME);
     });
 
-    return img;
+    const container = document.createElement('div');
+
+    container.classList.add(FLAG_CLASSNAME);
+    container.append(img);
+
+    return container;
   }
 
   createList(dataType) {
@@ -158,6 +169,7 @@ export default class CountryList {
     arr.forEach((item) => {
       const img = CountryList.addFlag(item);
       const name = document.createElement('span');
+      name.classList.add(COUNTRY_CLASSNAME);
       name.textContent = item.name;
 
       const dataProp = document.createElement('span');
@@ -178,7 +190,9 @@ export default class CountryList {
     this.list.append(fragment);
   }
 
-  update(state) {
+  update(state, actionType) {
+    if (actionType === COUNTRY) return;
+
     const { dataType, data, loading } = state;
 
     if (loading) return;
