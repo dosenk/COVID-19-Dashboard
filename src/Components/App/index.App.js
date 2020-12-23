@@ -35,7 +35,6 @@ export default class App {
   async start() {
     this.observer.actions.fetchApiData();
     renderHeader(this.mainElement);
-    this.table.start();
     this.chart.start();
     this.map.start();
     renderFooter(this.mainElement);
