@@ -103,7 +103,6 @@ export default class Table {
     this.section.appendChild(divToggle);
     this.section.appendChild(divContent);
     this.fillTableContent();
-    this.fillInfoCountry('Belarus');
   }
 
   fillTableContent() {
@@ -229,6 +228,45 @@ export default class Table {
 
         break;
     }
+  }
+
+  fillInfoCountry(countryName) {
+    while (this.content.firstChild) {
+      this.content.removeChild(this.content.firstChild);
+    }
+    this.infoCountry = this.data.get(countryName);
+
+    const ulGlobal = document.createElement('ul');
+    ulGlobal.style.display = 'flex';
+    this.arrayRecovered.slice(3).forEach((keyName, keyIndex) => {
+      const li = document.createElement('li');
+      if (this.contentToggle.innerHTML === 'All' && keyIndex <= 1) {
+        li.innerHTML = `${this.global[0][keyName]}`;
+      } else if (this.contentToggle.innerHTML === 'All' && keyIndex >= 2) {
+        li.innerHTML = `${this.global[0][keyName]}`;
+      }
+      ulGlobal.appendChild(li);
+    });
+    this.content.appendChild(ulGlobal);
+    const ul = document.createElement('ul');
+    ul.style.display = 'flex';
+    this.arrayRecovered.forEach((keyName, keyIndex) => {
+      const li = document.createElement('li');
+      if (keyIndex <= 2) {
+        if (keyName === 'Flag') {
+          li.style.backgroundImage = `url('${this.infoCountry[keyName.replace('F', 'f')]}')`;
+          li.style.width = '50px';
+        } else {
+          li.innerHTML = `${this.infoCountry[keyName.replace('Name', 'name').replace('P', 'p')]}`;
+        }
+      } else if (this.contentToggle.innerHTML === 'All' && keyIndex <= 4) {
+        li.innerHTML = `${this.infoCountry[keyName]}`;
+      } else if (this.contentToggle.innerHTML === 'All' && keyIndex > 4) {
+        li.innerHTML = `${this.infoCountry[keyName]}`;
+      }
+      ul.appendChild(li);
+    });
+    this.content.appendChild(ul);
   }
 
   addChangeTypeBtn(type) {
