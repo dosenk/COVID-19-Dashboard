@@ -61,6 +61,9 @@ export default class List {
     a.innerHTML = '&#9776;';
     this.section.appendChild(a);
 
+    const divTitles = document.createElement('div');
+    this.divTitles = divTitles;
+    this.section.appendChild(divTitles);
     this.createListTitles();
 
     const content = document.createElement('div');
@@ -94,6 +97,7 @@ export default class List {
   }
 
   fillContent() {
+    this.createListTitles();
     while (this.content.firstChild) {
       this.content.removeChild(this.content.firstChild);
     }
@@ -140,6 +144,9 @@ export default class List {
   }
 
   createListTitles() {
+    while (this.divTitles.firstChild) {
+      this.divTitles.removeChild(this.divTitles.firstChild);
+    }
     const ul = document.createElement('ul');
     ul.style.display = 'flex';
     this.array.forEach((keyName, keyIndex) => {
@@ -184,7 +191,7 @@ export default class List {
         ul.appendChild(li);
       }
     });
-    this.section.appendChild(ul);
+    this.divTitles.appendChild(ul);
   }
 
   addChangeTypeBtn(type) {
