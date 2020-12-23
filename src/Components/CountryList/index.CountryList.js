@@ -10,6 +10,8 @@ import {
   ICO_CLASSNAME,
   ICO_HIDDEN_CLASSNAME,
   COUNTER_CLASSNAME,
+  CLEAR_CLASSNAME,
+  KEYBOARD_CLASSNAME,
 } from './constants.CountryList';
 import './styles.CountryList.scss';
 
@@ -21,12 +23,22 @@ export default class CountryList {
     this.form = null;
     this.input = null;
     this.list = null;
+    this.clearBtn = null;
+    this.countriesArr = [];
   }
 
-  searchHandler(event) {
+  inputHandler() {
+    this.createList(this.observer.state.dataType);
+  }
+
+  submitHandler(event) {
     event.preventDefault();
 
-    console.log(this.input.value);
+    if (this.list.children.length !== 1) return;
+
+    const country = this.list.children[0].dataset.name;
+
+    this.observer.actions.setCountry(country);
   }
 
   listClickHandler({ target }) {
@@ -38,8 +50,12 @@ export default class CountryList {
   }
 
   setHandlers() {
-    this.form.addEventListener('submit', this.searchHandler.bind(this));
+    this.form.addEventListener('input', this.inputHandler.bind(this));
+    this.form.addEventListener('submit', this.submitHandler.bind(this));
     this.list.addEventListener('click', this.listClickHandler.bind(this));
+    this.clearBtn.addEventListener('click', () => {
+      this.input.value = '';
+    });
   }
 
   createElements() {
@@ -55,9 +71,19 @@ export default class CountryList {
     submitBtn.classList.add(SUBMIT_CLASSNAME);
     submitBtn.textContent = SUBMIT_LABEL;
 
+    this.clearBtn = document.createElement('button');
+    this.clearBtn.classList.add(CLEAR_CLASSNAME);
+    this.clearBtn.textContent = 'X';
+
+    const keyboardBtn = document.createElement('button');
+    keyboardBtn.classList.add(KEYBOARD_CLASSNAME);
+    keyboardBtn.textContent = 'Keyboard';
+
     this.form = document.createElement('form');
     this.form.classList.add(FORM_CLASSNAME);
+    this.form.append(keyboardBtn);
     this.form.append(this.input);
+    this.form.append(this.clearBtn);
     this.form.append(submitBtn);
     container.append(this.form);
 
@@ -69,9 +95,14 @@ export default class CountryList {
     this.parentElem.append(container);
   }
 
-  createList(countriesMap, dataType) {
-    const arr = Array.from(countriesMap.values());
+  createList(dataType) {
     const fragment = new DocumentFragment();
+    const value = this.input.value.trim().toLowerCase();
+    const arr = this.countriesArr.filter((item) => {
+      const country = item.name.toLowerCase();
+
+      return country.includes(value);
+    });
 
     arr.sort((a, b) => b[dataType] - a[dataType]);
 
@@ -108,7 +139,9 @@ export default class CountryList {
   update(state) {
     if (state.loading) return;
 
-    this.createList(state.data.Countries, state.dataType);
+    this.countriesArr = Array.from(state.data.Countries.values());
+
+    this.createList(state.dataType);
   }
 
   start() {
