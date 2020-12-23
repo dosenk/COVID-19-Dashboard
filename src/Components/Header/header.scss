@@ -1,8 +1,8 @@
 .header {
-  position: absolute;
-  top: 0;
+  position: relative;
   width: 100%;
-  height: 55px;
+  margin: 0 auto;
+  height: $heder_height;
   display: flex;
   align-items: center;
   border-bottom: 1px solid black;

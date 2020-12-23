@@ -1,8 +1,6 @@
-@import '../../styles/constants.scss';
+@import "../../styles/constants.scss";
 
 .component_wrapper {
-  $padding: 20px;
-
   padding: $padding;
   position: relative;
 
@@ -37,13 +35,13 @@
   .fullscreen_btn-enter {
     @extend .fullscreen_btn;
 
-    background-image: url('../../assets/ico/full-screen-button.svg');
+    background-image: url("../../assets/ico/full-screen-button.svg");
   }
 
   .fullscreen_btn-exit {
     @extend .fullscreen_btn;
 
-    background-image: url('../../assets/ico/exit-full-screen.svg');
+    background-image: url("../../assets/ico/exit-full-screen.svg");
   }
 
   &:hover {

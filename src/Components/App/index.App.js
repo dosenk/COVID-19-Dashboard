@@ -16,34 +16,38 @@ import CountryList from '../CountryList/index.CountryList';
 export default class App {
   constructor() {
     this.mainElement = document.createElement('main');
+    this.infoBlock = document.createElement('section');
+
     this.observer = new Observer();
 
+    this.map = new Map(
+      createContainer(this.infoBlock, MAP_CLASSNAME),
+      this.observer,
+    );
     this.table = new Table(
-      createContainer(this.mainElement, TABLE_CLASSNAME),
+      createContainer(this.infoBlock, TABLE_CLASSNAME),
       this.observer,
     );
     this.list = new CountryList(
-      createContainer(mainElement, LIST_CLASSNAME),
+      createContainer(this.mainElement, LIST_CLASSNAME),
       this.observer,
     );
     this.chart = new Chart(
-      createContainer(this.mainElement, CHART_CLASSNAME),
-      this.observer,
-    );
-    this.map = new Map(
-      createContainer(this.mainElement, MAP_CLASSNAME),
+      createContainer(this.infoBlock, CHART_CLASSNAME),
       this.observer,
     );
 
+    renderHeader(document.body);
+    this.mainElement.append(this.infoBlock);
     document.body.append(this.mainElement);
+    renderFooter(document.body);
   }
 
   async start() {
     this.observer.actions.fetchApiData();
-    renderHeader(this.mainElement);
+
     this.chart.start();
     this.map.start();
     this.list.start();
-    renderFooter(this.mainElement);
   }
 }

@@ -1,14 +1,37 @@
 .table--wrapper {
-  top: 50px;
-  width: 300px;
   table {
+    width: 100%;
+    min-width: 250px;
+    height: calc(100% - #{$slider_table_h} - #{$padding * 2} + 3px);
+    max-height: 350px;
+    background-color: rgb(216, 216, 216);
     th,
     tr,
     td {
+      text-align: center;
+      vertical-align: middle;
       border: 1px solid black;
     }
-
+    th {
+      font-weight: 900;
+    }
+    tr {
+      font-size: large;
+      font-weight: 600;
+      &:nth-child(1) {
+        background-color: $yellow_color;
+      }
+      &:nth-child(2) {
+        background-color: $orange_color;
+      }
+      &:nth-child(3) {
+        background-color: $pre_dark_color;
+      }
+    }
     caption {
+      border: 1px solid black;
+      background-color: rgb(179, 179, 179);
+      border-bottom: none;
       .country-name {
         display: inline-block;
       }
@@ -16,6 +39,7 @@
         display: none;
         width: 35px;
         height: 20px;
+        margin: 3px 0 0 5px;
       }
       .active-flag {
         display: inline-block;

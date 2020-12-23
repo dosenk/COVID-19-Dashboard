@@ -1,6 +1,6 @@
 import ChartJS from 'chart.js';
 import Slider from '../Slider/index.Slider';
-import { HOVER_BACKGROUND_COLOR } from './constants';
+import { HOVER_BACKGROUND_COLOR, CHART_WIDTH, CHART_HEIGHT } from './constants';
 
 export default class Chart {
   constructor(parentElement, observer) {
@@ -37,8 +37,8 @@ export default class Chart {
     this.container.classList.add('chart');
     const canvas = document.createElement('canvas');
     canvas.id = 'myChart';
-    canvas.width = 600;
-    canvas.height = 500;
+    canvas.width = CHART_WIDTH;
+    canvas.height = CHART_HEIGHT;
     this.container.append(canvas);
   }
 
