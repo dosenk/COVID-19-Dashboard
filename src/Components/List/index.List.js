@@ -67,6 +67,79 @@ export default class List {
     this.fillContent();
   }
 
+  addCheckbox() {
+    const div = document.createElement('table');
+    div.className = 'checkbox-list';
+    div.style.display = 'flex';
+    this.array.forEach((el, index) => {
+      const label = document.createElement('td');
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.className = `checkbox${el}`;
+      label.innerText += el;
+      input.checked = true;
+      input.addEventListener('click', () => {
+        this.fillContent();
+      });
+      label.appendChild(input);
+      div.appendChild(label);
+    });
+    this.section.appendChild(div);
+  }
+
+  createListTitles() {
+    while (this.divTitles.firstChild) {
+      this.divTitles.removeChild(this.divTitles.firstChild);
+    }
+    const ul = document.createElement('tr');
+    ul.style.display = 'flex';
+    this.array.forEach((keyName, keyIndex) => {
+      if (document.querySelector(`.checkbox${keyName}`).checked) {
+        const li = document.createElement('td');
+        const a = document.createElement('a');
+        const aUp = document.createElement('a');
+        const aDown = document.createElement('a');
+        li.className = `title-${keyName}`;
+        a.innerHTML = `${keyName.replace('Name', 'Country')}`; // &uArr; &dArr;
+        if (keyIndex) {
+          aUp.innerHTML = '&uArr;'; // &uArr; &dArr;
+          aDown.innerHTML = '&dArr;'; // &uArr; &dArr;
+        }
+        if (keyIndex) {
+          li.addEventListener('click', (e) => {
+            if (e.target.innerHTML === '⇑') {
+              this.countries = this.countries.sort((a1, b) => {
+                if (a1[keyName.replace('Name', 'name').replace('P', 'p')] > b[keyName.replace('Name', 'name').replace('P', 'p')]) {
+                  return 1;
+                }
+                if (a1[keyName.replace('Name', 'name').replace('P', 'p')] < b[keyName.replace('Name', 'name').replace('P', 'p')]) {
+                  return -1;
+                }
+                return 0;
+              });
+            } else if (e.target.innerHTML === '⇓') {
+              this.countries = this.countries.sort((a1, b) => {
+                if (a1[keyName.replace('Name', 'name').replace('P', 'p')] > b[keyName.replace('Name', 'name').replace('P', 'p')]) {
+                  return -1;
+                }
+                if (a1[keyName.replace('Name', 'name').replace('P', 'p')] < b[keyName.replace('Name', 'name').replace('P', 'p')]) {
+                  return 1;
+                }
+                return 0;
+              });
+            }
+            this.fillContent();
+          });
+        }
+        li.appendChild(a);
+        li.appendChild(aUp);
+        li.appendChild(aDown);
+        ul.appendChild(li);
+      }
+    });
+    this.divTitles.appendChild(ul);
+  }
+
   start() {
     this.div = document.createElement('div');
     const input = document.createElement('input');
