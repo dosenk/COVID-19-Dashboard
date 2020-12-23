@@ -13,7 +13,7 @@ export default (state, action) => {
         loading: true,
         country: DEFAULT_COUNTRY,
         dataType: DEFAULT_DATA_TYPE,
-        data: {},
+        data: { Countries: new Map(), Global: [] },
         ...state,
       };
     case LOADING:
