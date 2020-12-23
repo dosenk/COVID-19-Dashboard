@@ -2,9 +2,7 @@ import {
   DEFAULT_COUNTRY,
   DEFAULT_DATA_TYPE,
 } from '../Constants/index.Constants';
-import {
-  LOADING, INIT, DATA_FETCHED, COUNTRY, DATA_TYPE,
-} from './actionTypes';
+import { LOADING, INIT, DATA_FETCHED, COUNTRY, DATA_TYPE } from './actionTypes';
 
 export default (state, action) => {
   switch (action.type) {
@@ -13,7 +11,7 @@ export default (state, action) => {
         loading: true,
         country: DEFAULT_COUNTRY,
         dataType: DEFAULT_DATA_TYPE,
-        data: {},
+        data: { Countries: new Map(), Global: [] },
         ...state,
       };
     case LOADING:
