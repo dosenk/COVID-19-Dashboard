@@ -31,6 +31,13 @@ export default class CountryList {
     this.createList(this.observer.state.dataType);
   }
 
+  clearHandler(event) {
+    event.preventDefault();
+
+    this.input.value = '';
+    this.inputHandler();
+  }
+
   submitHandler(event) {
     event.preventDefault();
 
@@ -53,9 +60,7 @@ export default class CountryList {
     this.form.addEventListener('input', this.inputHandler.bind(this));
     this.form.addEventListener('submit', this.submitHandler.bind(this));
     this.list.addEventListener('click', this.listClickHandler.bind(this));
-    this.clearBtn.addEventListener('click', () => {
-      this.input.value = '';
-    });
+    this.clearBtn.addEventListener('click', this.clearHandler.bind(this));
   }
 
   createElements() {
@@ -98,13 +103,15 @@ export default class CountryList {
   createList(dataType) {
     const fragment = new DocumentFragment();
     const value = this.input.value.trim().toLowerCase();
-    const arr = this.countriesArr.filter((item) => {
-      const country = item.name.toLowerCase();
+    let arr = this.countriesArr;
 
-      return country.includes(value);
-    });
+    if (value) {
+      arr = arr.filter((item) => {
+        const country = item.name.toLowerCase();
 
-    arr.sort((a, b) => b[dataType] - a[dataType]);
+        return country.includes(value);
+      });
+    }
 
     arr.forEach((item) => {
       const img = document.createElement('img');
@@ -137,11 +144,14 @@ export default class CountryList {
   }
 
   update(state) {
-    if (state.loading) return;
+    const { dataType, data, loading } = state;
 
-    this.countriesArr = Array.from(state.data.Countries.values());
+    if (loading) return;
 
-    this.createList(state.dataType);
+    this.countriesArr = Array.from(data.Countries.values());
+
+    this.countriesArr.sort((a, b) => b[dataType] - a[dataType]);
+    this.createList(dataType);
   }
 
   start() {
