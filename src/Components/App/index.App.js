@@ -2,6 +2,8 @@ import Table from '../Table/index.Table';
 import Chart from '../Chart/index.Chart';
 import Observer from '../../Observer/index.Observer';
 import Map from '../Map/index.Map';
+import renderFooter from '../Footer/footer';
+import renderHeader from '../Header/header';
 import createContainer from '../fullscreenWrapper/index.ComponentWrapper';
 import {
   CHART_CLASSNAME,
@@ -13,11 +15,11 @@ import CountryList from '../CountryList/index.CountryList';
 
 export default class App {
   constructor() {
-    const mainElement = document.createElement('main');
+    this.mainElement = document.createElement('main');
     this.observer = new Observer();
 
     this.table = new Table(
-      createContainer(mainElement, TABLE_CLASSNAME),
+      createContainer(this.mainElement, TABLE_CLASSNAME),
       this.observer,
     );
     this.list = new CountryList(
@@ -25,23 +27,24 @@ export default class App {
       this.observer,
     );
     this.chart = new Chart(
-      createContainer(mainElement, CHART_CLASSNAME),
+      createContainer(this.mainElement, CHART_CLASSNAME),
       this.observer,
     );
     this.map = new Map(
-      createContainer(mainElement, MAP_CLASSNAME),
+      createContainer(this.mainElement, MAP_CLASSNAME),
       this.observer,
     );
 
-    document.body.append(mainElement);
+    document.body.append(this.mainElement);
   }
 
   async start() {
     this.observer.actions.fetchApiData();
-
+    renderHeader(this.mainElement);
     this.table.start();
     this.chart.start();
     this.map.start();
     this.list.start();
+    renderFooter(this.mainElement);
   }
 }
