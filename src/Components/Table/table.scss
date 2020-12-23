@@ -1,0 +1,17 @@
+.table--wrapper {
+  table {
+    caption {
+      .country-name {
+        display: inline-block;
+      }
+      .country-flag {
+        display: none;
+        width: 35px;
+        height: 20px;
+      }
+      .active-flag {
+        display: inline-block;
+      }
+    }
+  }
+}

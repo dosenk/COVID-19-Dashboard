@@ -4,7 +4,7 @@ import { DATA_TYPES_VALUES, DATA_TYPES_DECRYPTION } from '../../Constants/index.
 export default class Slider {
   constructor(observer) {
     this.observer = observer;
-    observer.subscribe(this);
+    if (observer !== null) observer.subscribe(this);
     this.createContainer();
   }
 

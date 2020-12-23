@@ -1,11 +1,15 @@
 import * as types from '../../Constants/dataTypes';
+// import Slider from '../Slider/index.Slider';
+import {
+  TABLE_CLASS, TABLE_WRAPPER_CLASS, THEAD_CATEGORIES, THEAD_TBODY_CATEGORIES,
+} from './constants';
 
 export default class Table {
   constructor(parentElement, observer) {
-    this.parent = parentElement;
-
+    this.parentElement = parentElement;
     this.observer = observer;
     observer.subscribe(this);
+    this.createContainer();
   }
 
   addChangeTypeBtn(type) {
@@ -22,21 +26,84 @@ export default class Table {
   start() {
     this.div = document.createElement('div');
     const input = document.createElement('input');
-
     input.type = 'text';
     input.addEventListener('change', (event) => {
       this.observer.actions.setCountry(event.currentTarget.value);
     });
     this.div.append(input);
-
     Object.values(types).forEach((type) => {
       this.addChangeTypeBtn(type);
     });
 
-    this.parent.append(this.div);
+    this.parentElement.append(this.div);
   }
 
   update(state, eventType) {
     console.log(eventType, state);
+    this.updateData(state);
+  }
+
+  createContainer() {
+    this.container = document.createElement('section');
+    this.container.className = TABLE_CLASS;
+    const tableWrapper = document.createElement('div');
+    tableWrapper.className = TABLE_WRAPPER_CLASS;
+    const table = document.createElement('table'); // 0
+    const tableCaption = document.createElement('caption'); // 1
+    this.tableCaptionCountry = document.createElement('div');
+    this.tableCaptionCountry.className = 'country-name';
+    this.tableCaptionFlag = document.createElement('img');
+    this.tableCaptionFlag.className = 'country-flag';
+    tableCaption.append(this.tableCaptionCountry, this.tableCaptionFlag);
+    const tableHead = document.createElement('thead');
+    const tableHeadTr = document.createElement('tr');
+    THEAD_CATEGORIES.forEach((cat) => {
+      const th = document.createElement('th');
+      th.innerText = cat;
+      tableHeadTr.append(th);
+    });
+    tableHead.append(tableHeadTr); // 2
+    const tableBody = document.createElement('tbody'); // 3
+    THEAD_TBODY_CATEGORIES.forEach((arr) => {
+      const tr = document.createElement('tr');
+      for (let i = 0; i < 3; i += 1) {
+        const td = document.createElement('td');
+        if (i === 0) td.innerText = arr[i];
+        else td.setAttribute('data', arr[i]);
+        tr.append(td);
+      }
+      tableBody.append(tr);
+    });
+    table.append(tableCaption, tableHead, tableBody);
+    tableWrapper.append(this.table);
+    this.container.append(tableWrapper);
+    this.parentElement.append(table);
+  }
+
+  updateData(state) {
+    try {
+      const { country } = state;
+      const resultData = (country === 'All')
+        ? state.data.Global[0]
+        : state.data.Countries.get(country);
+      this.setData(resultData, country);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    }
+  }
+
+  setData(data, country) {
+    this.tableCaptionCountry.innerText = country === 'All' ? 'All World' : country;
+    if (data.flag) {
+      this.tableCaptionFlag.classList.add('active-flag');
+      this.tableCaptionFlag.src = data.flag;
+    }
+    const allTd = document.querySelectorAll('*[data]');
+    allTd.forEach((item) => {
+      const td = item;
+      const dataAttr = td.getAttribute('data');
+      td.innerText = data[dataAttr];
+    });
   }
 }
